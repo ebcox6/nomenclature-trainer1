@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<title>Nomenclature Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one 880px study column; the learning path is a stack of periodic-table cells, one per category. */
+:root {
+  --bg: #EDF0F4; --surface: #FFFFFF; --ink: #131A25; --muted: #566073; --line: #D3DAE3;
+  --accent: #1E4CCB; --accent-ink: #FFFFFF; --accent-soft: #E3EAFB;
+  --ok: #17703F; --ok-bg: #E2F2E8; --warn: #845400; --warn-bg: #FBF0D6; --bad: #AF2216; --bad-bg: #FBE5E2;
+  --t1: #F5D7C6; --t2: #F1E2B3; --t3: #D5E7C4; --t4: #CBE1EB; --t5: #DAD3F0; --t6: #EDD1E2; --t7: #DDE2E9;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D1219; --surface: #151C26; --ink: #E6EBF2; --muted: #9AA5B6; --line: #283243;
+  --accent: #82A0FF; --accent-ink: #0D1219; --accent-soft: #1C2846;
+  --ok: #63CF93; --ok-bg: #11301F; --warn: #E9B95A; --warn-bg: #33280E; --bad: #F48A7F; --bad-bg: #3A1713;
+  --t1: #4A2E22; --t2: #45391A; --t3: #2B3D22; --t4: #1E3946; --t5: #312A4D; --t6: #44273A; --t7: #29303B; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0D1219; --surface: #151C26; --ink: #E6EBF2; --muted: #9AA5B6; --line: #283243;
+  --accent: #82A0FF; --accent-ink: #0D1219; --accent-soft: #1C2846;
+  --ok: #63CF93; --ok-bg: #11301F; --warn: #E9B95A; --warn-bg: #33280E; --bad: #F48A7F; --bad-bg: #3A1713;
+  --t1: #4A2E22; --t2: #45391A; --t3: #2B3D22; --t4: #1E3946; --t5: #312A4D; --t6: #44273A; --t7: #29303B; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body); }
+.wrap { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px; }
+h1, h2, h3, h4 { font-family: var(--f-display); line-height: 1.15; text-wrap: balance; margin: 0 }
+h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -.01em }
+h2 { font-size: 1.9rem; font-weight: 800; letter-spacing: -.02em }
+h3 { font-size: 1.15rem; font-weight: 600 }
+h4 { font-size: 1.05rem; font-weight: 600 }
+p { margin: 0 }
+.muted { color: var(--muted) }
+sub { font-size: .68em; vertical-align: -.3em; line-height: 0 }
+sup { font-size: .62em; vertical-align: .55em; line-height: 0 }
+.fx { font-family: var(--f-body); font-weight: 700; letter-spacing: .01em; white-space: nowrap }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
+
+/* header */
+.top { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; padding-block: 18px; border-bottom: 1px solid var(--line); margin-bottom: 28px }
+.brand { display: flex; align-items: center; gap: 10px }
+.brand .cell { width: 38px; height: 38px; border: 2px solid var(--ink); border-radius: 4px; display: grid; place-items: center; font: 800 1rem var(--f-display); position: relative }
+.brand .cell::before { content: "7"; position: absolute; top: 1px; left: 3px; font: 500 .5rem var(--f-mono) }
+.nav { display: flex; gap: 4px; flex-wrap: wrap }
+.nav button { font: 700 .92rem var(--f-body); background: none; border: 0; color: var(--muted); padding: 8px 12px; border-radius: 999px; cursor: pointer }
+.nav button:hover { color: var(--ink) }
+.nav button[aria-current="page"] { background: var(--ink); color: var(--bg) }
+
+/* buttons */
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.btn { font: 700 .95rem var(--f-body); padding: 10px 16px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px }
+.btn:hover:not(:disabled) { border-color: var(--ink) }
+.btn.solid { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.btn.solid:hover:not(:disabled) { filter: brightness(1.08); border-color: var(--accent) }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--accent); padding-inline: 8px }
+.btn:disabled { opacity: .45; cursor: not-allowed }
+.link { font: 700 .92rem var(--f-body); background: none; border: 0; padding: 4px 0; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-align: left }
+.chip { font: 700 .78rem var(--f-body); border: 1px solid var(--line); background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 3px 10px; cursor: pointer; margin-left: 6px }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; background: var(--surface); flex-wrap: wrap }
+.seg button { font: 700 .85rem var(--f-body); border: 0; background: none; color: var(--muted); padding: 7px 12px; border-radius: 999px; cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg) }
+
+/* path */
+.intro { display: grid; gap: 10px; margin-bottom: 24px }
+.intro p { max-width: 62ch }
+.meter { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; max-width: 320px }
+.meter span { display: block; height: 100%; background: var(--accent); transition: width .4s }
+.cats { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px }
+.cat { display: grid; grid-template-columns: 112px 1fr; gap: 18px; padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r) }
+.cat-body { display: grid; gap: 6px; align-content: start; min-width: 0 }
+.cat-body .row { margin-top: 6px }
+.cat.locked .tile { filter: grayscale(1); opacity: .55 }
+.tile { aspect-ratio: 1; max-width: 100%; border: 2px solid var(--ink); border-radius: 6px; display: grid; grid-template-rows: auto 1fr auto; padding: 6px 8px; color: var(--ink) }
+.tile .z { font: 500 .75rem var(--f-mono) }
+.tile .sym { font: 800 1.3rem var(--f-display); align-self: center; justify-self: center; white-space: nowrap }
+.tile .nm { font-size: .64rem; text-align: center; line-height: 1.2; color: var(--ink); opacity: .8 }
+.t1 { background: var(--t1) } .t2 { background: var(--t2) } .t3 { background: var(--t3) } .t4 { background: var(--t4) } .t5 { background: var(--t5) } .t6 { background: var(--t6) } .t7 { background: var(--t7) }
+.badge, .lock { font: 700 .7rem var(--f-body); letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; vertical-align: middle; margin-left: 6px }
+.badge { background: var(--ok-bg); color: var(--ok) }
+.lock { background: var(--t7); color: var(--muted) }
+.meta { font-size: .85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center }
+.dots { display: inline-flex; gap: 4px }
+.dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--muted) }
+.dot.on { background: var(--ok); border-color: var(--ok) }
+.foot { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); display: grid; gap: 10px; font-size: .9rem }
+.confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px; border-radius: 8px; background: var(--bad-bg); color: var(--bad) }
+.confirm .btn.solid { background: var(--bad); border-color: var(--bad); color: var(--surface) }
+
+/* practice + mastery */
+.bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: 18px }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; display: grid; gap: 14px }
+.ask { font: 700 .78rem var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
+.q { font-size: 2rem; line-height: 1.2; min-width: 0; overflow-wrap: anywhere }
+.q .fx { font-size: 2.6rem }
+.q .nmq { font-family: var(--f-display); font-weight: 600 }
+.answer { width: 100%; font: 400 1.2rem var(--f-body); padding: 12px 14px; border: 2px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink) }
+.answer.mono { font-family: var(--f-mono) }
+.answer:focus { border-color: var(--accent); outline: none }
+.preview { font-size: .95rem; color: var(--muted); min-height: 1.5em }
+.preview .fx { color: var(--ink); font-size: 1.15rem }
+.fb { border-radius: 8px; display: grid; gap: 6px }
+.fb:not(:empty) { padding: 12px 14px }
+.fb.ok { background: var(--ok-bg); color: var(--ok) }
+.fb.bad { background: var(--bad-bg); color: var(--bad) }
+.fb .w { color: var(--warn); background: var(--warn-bg); padding: 6px 10px; border-radius: 6px }
+.fb .ans { color: var(--ink) }
+.older-txt { font-size: .95rem; padding: 10px 12px; background: var(--accent-soft); border-radius: 8px }
+.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; display: grid; gap: 8px }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; column-gap: 10px; padding: 10px 12px; border: 1.5px dashed var(--line); border-radius: 8px; animation: in .25s ease }
+.steps li::before { content: counter(s); grid-row: span 3; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font: 700 .78rem var(--f-mono) }
+.steps .lbl { font: 700 .75rem var(--f-body); text-transform: uppercase; letter-spacing: .07em; color: var(--muted) }
+.steps .val { font-size: 1.1rem; overflow-wrap: anywhere }
+.steps .note { font-size: .88rem; color: var(--muted) }
+@keyframes in { from { opacity: .3; transform: translateY(4px) } to { opacity: 1; transform: none } }
+.msbar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden }
+.msbar span { display: block; height: 100%; background: var(--accent); transition: width .3s }
+.score { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px; border-radius: var(--r) }
+.score.pass { background: var(--ok-bg) } .score.fail { background: var(--bad-bg) }
+.score .big { font: 800 3.2rem/1 var(--f-display) } .score .big small { font-size: 1.3rem; color: var(--muted) }
+.score p { flex: 1 1 260px }
+.missed { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px }
+.missed li { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 4px; background: var(--surface) }
+.missed .lbl, .lblx { display: inline-block; min-width: 80px; font: 700 .72rem var(--f-body); text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
+#ms-results { display: grid; gap: 14px }
+
+/* guide */
+.trail { list-style: none; padding: 0; margin: 14px 0; display: grid; gap: 8px }
+.trail li { padding: 12px 14px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; justify-content: space-between }
+.trail li.done { background: var(--surface); border: 1px solid var(--line); color: var(--muted) }
+.trail li.done b { color: var(--ink); font-size: .85rem; padding: 2px 10px; border-radius: 999px; background: var(--accent-soft) }
+.trail li.ask { background: var(--surface); border: 2px solid var(--ink); font-weight: 700; font-size: 1.05rem }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; scroll-margin: 24px }
+.rule.leaf { border: 2px solid var(--accent); margin-bottom: 10px }
+.rule p, .rule li { max-width: 66ch }
+.rule ul, .rule ol { margin: 0; padding-left: 20px; display: grid; gap: 4px }
+.rule .ex { padding: 10px 12px; background: var(--bg); border-radius: 6px; line-height: 1.8 }
+.rule.flash { animation: flash 1.6s ease }
+@keyframes flash { 0%, 40% { box-shadow: 0 0 0 4px var(--accent) } 100% { box-shadow: 0 0 0 0 transparent } }
+.mini { border-collapse: collapse; font-size: .92rem }
+.mini td { padding: 4px 12px 4px 0 }
+.pfx td { font-family: var(--f-mono); font-size: .82rem }
+.tablewrap { overflow-x: auto }
+.rules { display: grid; gap: 12px; margin-top: 10px }
+.section-h { margin: 30px 0 4px; font-size: 1.2rem }
+
+/* ion sheet */
+.ions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px }
+.ions section { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; min-width: 0 }
+.ions h3 { margin-bottom: 8px }
+.ions table { width: 100%; border-collapse: collapse; font-size: .95rem }
+.ions td { padding: 6px 4px; border-top: 1px solid var(--line); vertical-align: top }
+.ions td:first-child { width: 88px; font-size: 1.05rem }
+.older { margin-left: 6px; font-style: italic; color: var(--accent) }
+
+@media (max-width: 520px) {
+  .cat { grid-template-columns: 76px 1fr; gap: 12px }
+  .tile .nm { display: none }
+  .tile .sym { font-size: .95rem }
+  .q { font-size: 1.6rem } .q .fx { font-size: 2.1rem }
+  .card { padding: 16px }
+  h2 { font-size: 1.55rem }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="cell" aria-hidden="true">Nm</span><h1>Nomenclature Trainer</h1></div>
+    <nav class="nav" aria-label="Sections">
+      <button data-go="path" aria-current="page">Learning path</button>
+      <button data-go="guide">Guides</button>
+      <button data-go="ions">Ion sheet</button>
+    </nav>
+  </header>
+
+  <main>
+    <section data-view="path">
+      <div class="intro">
+        <h2>Name it. Write it. Master it.</h2>
+        <p class="muted">Work through the seven categories in order. In each one, read the guide, practice with step-by-step help, then pass a no-hint mastery set. <span id="rule-txt"></span></p>
+        <p id="path-progress" class="meta"></p>
+        <div class="meter" aria-hidden="true"><span id="path-bar"></span></div>
+      </div>
+      <ol class="cats" id="cats"></ol>
+      <div class="foot">
+        <p class="muted">Your progress saves in this browser on this device. If you switch devices or clear your browser data, you start over.</p>
+        <div><button class="link" id="reset-ask">Reset my progress</button></div>
+        <div class="confirm" id="reset-confirm" hidden>
+          <span>Erase all badges and scores on this device?</span>
+          <button class="btn solid" id="reset-yes">Erase progress</button>
+          <button class="btn" id="reset-no">Keep it</button>
+        </div>
+        <p id="reset-done" class="muted" hidden>Progress erased.</p>
+      </div>
+    </section>
+
+    <section data-view="guide" hidden>
+      <div class="bar">
+        <h2>Guides</h2>
+        <div class="seg" role="group" aria-label="Choose a guide">
+          <button data-guide="n" aria-pressed="true">Naming (formula → name)</button>
+          <button data-guide="f" aria-pressed="false">Formula writing (name → formula)</button>
+        </div>
+      </div>
+      <h3>Walk a compound through the guide</h3>
+      <div id="tree"></div>
+      <h3 class="section-h">All rules</h3>
+      <div class="rules" id="rules"></div>
+    </section>
+
+    <section data-view="ions" hidden>
+      <div class="bar"><h2>Ion sheet</h2></div>
+      <p class="muted" style="margin-bottom:16px;max-width:62ch">Older names are optional. The Stock name with a Roman numeral is the main answer. In older names, -ic means the higher charge and -ous means the lower charge.</p>
+      <div class="ions">
+        <section><h3>Cations: one charge</h3><div class="tablewrap"><table><tbody id="ions-fixed"></tbody></table></div></section>
+        <section><h3>Cations: more than one charge</h3><div class="tablewrap"><table><tbody id="ions-var"></tbody></table></div></section>
+        <section><h3>Anions: single element</h3><div class="tablewrap"><table><tbody id="ions-mono"></tbody></table></div></section>
+        <section><h3>Polyatomic anions</h3><div class="tablewrap"><table><tbody id="ions-poly"></tbody></table></div></section>
+      </div>
+    </section>
+
+    <section data-view="practice" hidden>
+      <div class="bar">
+        <div><button class="link" data-go="path">← Learning path</button><h2 id="pr-title"></h2></div>
+        <div class="seg" role="group" aria-label="Direction">
+          <button data-dir="mix" aria-pressed="true">Mix</button>
+          <button data-dir="n2f" aria-pressed="false">Name → Formula</button>
+          <button data-dir="f2n" aria-pressed="false">Formula → Name</button>
+        </div>
+      </div>
+      <div class="card">
+        <p class="ask" id="pr-ask"></p>
+        <p class="q" id="pr-q"></p>
+        <p class="meta" id="pr-src"></p>
+        <label for="pr-ans" class="lblx">Your answer</label>
+        <input id="pr-ans" class="answer" autocomplete="off" autocorrect="off" spellcheck="false">
+        <p class="preview" id="pr-preview"></p>
+        <div class="row">
+          <button class="btn solid" id="pr-check">Check</button>
+          <button class="btn solid" id="pr-next" hidden>Next problem</button>
+          <button class="btn" id="pr-step">Walk me through it</button>
+          <button class="btn ghost" id="pr-hint">Hint: open the guide</button>
+          <button class="btn ghost" id="pr-older" aria-expanded="false" hidden>Show older name</button>
+          <button class="btn ghost" id="pr-showans" hidden>Show answer</button>
+          <button class="btn ghost" id="pr-skip">Skip</button>
+        </div>
+        <p class="older-txt" id="pr-older-txt" hidden></p>
+        <div class="fb" id="pr-fb" aria-live="polite"></div>
+        <ol class="steps" id="pr-steps"></ol>
+      </div>
+    </section>
+
+    <section data-view="mastery" hidden>
+      <div class="bar">
+        <div><button class="link" id="ms-quit">← Leave set</button><h2 id="ms-title"></h2></div>
+        <p class="meta" id="ms-count"></p>
+      </div>
+      <div class="msbar" aria-hidden="true" style="margin-bottom:16px"><span id="ms-bar"></span></div>
+      <div class="card" id="ms-quiz">
+        <p class="ask" id="ms-ask"></p>
+        <p class="q" id="ms-q"></p>
+        <label for="ms-ans" class="lblx">Your answer</label>
+        <input id="ms-ans" class="answer" autocomplete="off" autocorrect="off" spellcheck="false">
+        <p class="preview" id="ms-preview"></p>
+        <div class="row"><button class="btn solid" id="ms-submit">Submit answer</button><span class="muted" style="font-size:.88rem">No hints in a mastery set. You'll see results at the end.</span></div>
+      </div>
+      <div id="ms-results" hidden></div>
+    </section>
+  </main>
+</div>
+<script>
+/* ===== Nomenclature engine: ion data, problem generation, answer checking ===== */
+const CONFIG = {
+  setSize: 10,        // problems per mastery set (half each direction)
+  passScore: 8,       // score needed on a set
+  setsInARow: 2,      // consecutive passing sets needed for a badge
+  unlockAll: false    // teacher preview: set true to open every category
+};
+
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+const PFX = ['', 'mono', 'di', 'tri', 'tetra', 'penta', 'hexa', 'hepta', 'octa', 'nona', 'deca'];
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+const cap = s => s[0].toUpperCase() + s.slice(1);
+
+/* ---------- Data: ions.csv and problem_bank.csv, embedded verbatim ---------- */
+const IONS_CSV = `name,formula,charge,type,variable_charge,aliases,notes
+hydrogen,H,1,cation,no,,acids only
+lithium,Li,1,cation,no,,
+sodium,Na,1,cation,no,,
+potassium,K,1,cation,no,,
+rubidium,Rb,1,cation,no,,
+cesium,Cs,1,cation,no,,
+silver,Ag,1,cation,no,,fixed charge - no numeral
+ammonium,NH4,1,polyatomic_cation,no,,
+copper(I),Cu,1,cation,yes,cuprous,
+gold(I),Au,1,cation,yes,,
+mercury(I),Hg2,2,polyatomic_cation,yes,mercurous,diatomic ion - never simplify Hg2
+beryllium,Be,2,cation,no,,
+magnesium,Mg,2,cation,no,,
+calcium,Ca,2,cation,no,,
+strontium,Sr,2,cation,no,,
+barium,Ba,2,cation,no,,
+zinc,Zn,2,cation,no,,fixed charge - no numeral
+cadmium,Cd,2,cation,no,,fixed charge - no numeral
+copper(II),Cu,2,cation,yes,cupric,
+iron(II),Fe,2,cation,yes,ferrous,
+cobalt(II),Co,2,cation,yes,,
+nickel(II),Ni,2,cation,yes,,
+lead(II),Pb,2,cation,yes,plumbous,
+tin(II),Sn,2,cation,yes,stannous,
+manganese(II),Mn,2,cation,yes,,
+chromium(II),Cr,2,cation,yes,,
+mercury(II),Hg,2,cation,yes,mercuric,
+titanium(II),Ti,2,cation,yes,,
+aluminum,Al,3,cation,no,,
+gallium,Ga,3,cation,no,,
+scandium,Sc,3,cation,no,,
+iron(III),Fe,3,cation,yes,ferric,
+cobalt(III),Co,3,cation,yes,,
+chromium(III),Cr,3,cation,yes,,
+manganese(III),Mn,3,cation,yes,,
+gold(III),Au,3,cation,yes,,
+nickel(III),Ni,3,cation,yes,,
+tin(IV),Sn,4,cation,yes,stannic,
+lead(IV),Pb,4,cation,yes,plumbic,
+titanium(IV),Ti,4,cation,yes,,
+manganese(IV),Mn,4,cation,yes,,
+hydride,H,-1,anion,,,
+fluoride,F,-1,anion,,,
+chloride,Cl,-1,anion,,,
+bromide,Br,-1,anion,,,
+iodide,I,-1,anion,,,
+oxide,O,-2,anion,,,
+sulfide,S,-2,anion,,,
+selenide,Se,-2,anion,,,
+nitride,N,-3,anion,,,
+phosphide,P,-3,anion,,,
+arsenide,As,-3,anion,,,
+acetate,C2H3O2,-1,polyatomic_anion,,CH3COO,
+cyanide,CN,-1,polyatomic_anion,,,binary-style acid: hydrocyanic acid
+hydroxide,OH,-1,polyatomic_anion,,,
+nitrate,NO3,-1,polyatomic_anion,,,
+nitrite,NO2,-1,polyatomic_anion,,,
+hydrogen carbonate,HCO3,-1,polyatomic_anion,,bicarbonate,
+hydrogen sulfate,HSO4,-1,polyatomic_anion,,bisulfate,
+hydrogen sulfite,HSO3,-1,polyatomic_anion,,bisulfite,
+dihydrogen phosphate,H2PO4,-1,polyatomic_anion,,,
+permanganate,MnO4,-1,polyatomic_anion,,,
+perchlorate,ClO4,-1,polyatomic_anion,,,
+chlorate,ClO3,-1,polyatomic_anion,,,
+chlorite,ClO2,-1,polyatomic_anion,,,
+hypochlorite,ClO,-1,polyatomic_anion,,,
+iodate,IO3,-1,polyatomic_anion,,,
+thiocyanate,SCN,-1,polyatomic_anion,,,
+carbonate,CO3,-2,polyatomic_anion,,,
+sulfate,SO4,-2,polyatomic_anion,,,
+sulfite,SO3,-2,polyatomic_anion,,,
+chromate,CrO4,-2,polyatomic_anion,,,
+dichromate,Cr2O7,-2,polyatomic_anion,,,
+oxalate,C2O4,-2,polyatomic_anion,,,
+hydrogen phosphate,HPO4,-2,polyatomic_anion,,monohydrogen phosphate,
+thiosulfate,S2O3,-2,polyatomic_anion,,,
+phosphate,PO4,-3,polyatomic_anion,,,
+phosphite,PO3,-3,polyatomic_anion,,,
+arsenate,AsO4,-3,polyatomic_anion,,,
+arsenite,AsO3,-3,polyatomic_anion,,,`;
+const BANK_CSV = `category,formula,name,source,notes
+binary_ionic,MgS,magnesium sulfide,Naming Guide,
+binary_ionic,NaBr,sodium bromide,Binary Cpd Wkst; naming compounds.docx,
+binary_ionic,CaO,calcium oxide,Binary Cpd Wkst; Practice.docx,
+binary_ionic,AgCl,silver chloride,Binary Cpd Wkst,
+binary_ionic,Ag2O,silver oxide,Binary Cpd Wkst,
+binary_ionic,AlN,aluminum nitride,Binary Cpd Wkst; Guided Inquiry,
+binary_ionic,ZnI2,zinc iodide,Binary Cpd Wkst,
+binary_ionic,Mg3N2,magnesium nitride,Binary Cpd Wkst,
+binary_ionic,CaH2,calcium hydride,Binary Cpd Wkst,
+binary_ionic,K3P,potassium phosphide,Binary Cpd Wkst,
+binary_ionic,CaF2,calcium fluoride,Binary Cpd Wkst; Mixed III,
+binary_ionic,Na3N,sodium nitride,Binary Cpd Wkst,
+binary_ionic,MgCl2,magnesium chloride,Binary Cpd Wkst,
+binary_ionic,BaCl2,barium chloride,Binary Cpd Wkst; POGIL 16,
+binary_ionic,KI,potassium iodide,Binary Cpd Wkst,
+binary_ionic,AlCl3,aluminum chloride,Binary Cpd Wkst,
+binary_ionic,AgBr,silver bromide,Binary Cpd Wkst,
+binary_ionic,MgH2,magnesium hydride,Binary Cpd Wkst,
+binary_ionic,ZnS,zinc sulfide,Binary Cpd Wkst,
+binary_ionic,KCl,potassium chloride,Binary Cpd Wkst,
+binary_ionic,Li2O,lithium oxide,Binary Cpd Wkst; POGIL 16,
+binary_ionic,CaBr2,calcium bromide,Binary Cpd Wkst,
+binary_ionic,LiH,lithium hydride,Binary Cpd Wkst,
+binary_ionic,K2O,potassium oxide,Binary Cpd Wkst,
+binary_ionic,ZnO,zinc oxide,Binary Cpd Wkst,
+binary_ionic,SrS,strontium sulfide,Binary Cpd Wkst,
+binary_ionic,Ag2S,silver sulfide,Binary Cpd Wkst; Quiz B,
+binary_ionic,ZnF2,zinc fluoride,Binary Cpd Wkst,
+binary_ionic,Ag3N,silver nitride,Binary Cpd Wkst,
+binary_ionic,NaF,sodium fluoride,Binary Cpd Wkst,
+binary_ionic,BaO,barium oxide,Binary Cpd Wkst,
+binary_ionic,Na2S,sodium sulfide,Binary Cpd Wkst; Practice.docx,
+binary_ionic,AlBr3,aluminum bromide,Binary Cpd Wkst,
+binary_ionic,Li3N,lithium nitride,Binary Cpd Wkst,
+binary_ionic,SrI2,strontium iodide,Binary Cpd Wkst,
+binary_ionic,MgO,magnesium oxide,Binary Cpd Wkst,
+binary_ionic,Al2O3,aluminum oxide,Binary Cpd Wkst; Guided Inquiry,
+binary_ionic,CaSe,calcium selenide,Guided Inquiry,
+binary_ionic,Cs3As,cesium arsenide,Guided Inquiry,
+binary_ionic,BeCl2,beryllium chloride,Guided Inquiry,
+binary_ionic,Li3P,lithium phosphide,Guided Inquiry; Mixed III,
+binary_ionic,Ga2Se3,gallium selenide,Guided Inquiry,
+binary_ionic,Cs3P,cesium phosphide,Guided Inquiry,
+binary_ionic,Ga2O3,gallium oxide,Guided Inquiry,
+binary_ionic,RbI,rubidium iodide,Guided Inquiry,
+binary_ionic,K3N,potassium nitride,Practice.docx; POGIL 16,
+binary_ionic,Al2S3,aluminum sulfide,Mixed II; POGIL 16,
+binary_ionic,Be3P2,beryllium phosphide,naming compounds.docx,
+binary_ionic,Ca3N2,calcium nitride,Naming Formulas.pdf,
+binary_ionic,MgBr2,magnesium bromide,Naming Formulas.pdf,
+binary_ionic,MgI2,magnesium iodide,Practice #2,
+binary_ionic,GaF3,gallium fluoride,Mixed II,
+binary_ionic,GaCl3,gallium chloride,Mixed IV,key's name "gallium trichloride" is wrong
+binary_ionic,Zn3P2,zinc phosphide,POGIL 16; Mixed I,
+binary_ionic,Ba3N2,barium nitride,Mixed I,
+binary_ionic,SrCl2,strontium chloride,Mixed I,
+binary_ionic,Na3P,sodium phosphide,Naming Formulas.pdf,
+binary_ionic,AlI3,aluminum iodide,Naming Formulas.pdf,
+transition_metal,FeS,iron(II) sulfide,Formula Writing Guide,
+transition_metal,NiBr2,nickel(II) bromide,Binary Cpd Wkst,
+transition_metal,FeO,iron(II) oxide,Binary Cpd Wkst,
+transition_metal,Fe2O3,iron(III) oxide,Binary Cpd Wkst,
+transition_metal,SnCl4,tin(IV) chloride,Binary Cpd Wkst,
+transition_metal,PbCl4,lead(IV) chloride,Binary Cpd Wkst; POGIL 16,
+transition_metal,SnBr2,tin(II) bromide,Binary Cpd Wkst,
+transition_metal,CrP,chromium(III) phosphide,Binary Cpd Wkst,
+transition_metal,FeF2,iron(II) fluoride,Binary Cpd Wkst,
+transition_metal,AuCl3,gold(III) chloride,Binary Cpd Wkst,
+transition_metal,SnO2,tin(IV) oxide,Binary Cpd Wkst,
+transition_metal,SnCl2,tin(II) chloride,Binary Cpd Wkst; POGIL 16,
+transition_metal,Ni2O3,nickel(III) oxide,Binary Cpd Wkst,
+transition_metal,HgF2,mercury(II) fluoride,Binary Cpd Wkst,
+transition_metal,PbO,lead(II) oxide,Binary Cpd Wkst,
+transition_metal,FeI3,iron(III) iodide,Binary Cpd Wkst; Guided Inquiry,
+transition_metal,AuBr,gold(I) bromide,Binary Cpd Wkst,
+transition_metal,CuS,copper(II) sulfide,Binary Cpd Wkst,
+transition_metal,Fe3N2,iron(II) nitride,Binary Cpd Wkst,
+transition_metal,PbI4,lead(IV) iodide,Binary Cpd Wkst,
+transition_metal,Sn3P4,tin(IV) phosphide,Binary Cpd Wkst,
+transition_metal,CrCl2,chromium(II) chloride,Binary Cpd Wkst,
+transition_metal,NiF3,nickel(III) fluoride,Binary Cpd Wkst,
+transition_metal,CoI2,cobalt(II) iodide,Binary Cpd Wkst,
+transition_metal,AuF3,gold(III) fluoride,Binary Cpd Wkst,
+transition_metal,HgO,mercury(II) oxide,Binary Cpd Wkst,
+transition_metal,FeN,iron(III) nitride,Binary Cpd Wkst,
+transition_metal,FeCl3,iron(III) chloride,Binary Cpd Wkst,
+transition_metal,Cu2O,copper(I) oxide,Binary Cpd Wkst; Mixed IV,
+transition_metal,CoBr2,cobalt(II) bromide,Binary Cpd Wkst,
+transition_metal,PbI2,lead(II) iodide,Binary Cpd Wkst,
+transition_metal,HgBr2,mercury(II) bromide,Binary Cpd Wkst,
+transition_metal,PbS,lead(II) sulfide,Binary Cpd Wkst,
+transition_metal,SnI4,tin(IV) iodide,Binary Cpd Wkst,
+transition_metal,Cr2O3,chromium(III) oxide,Binary Cpd Wkst,worksheet typo "xoide"
+transition_metal,SnF2,tin(II) fluoride,Binary Cpd Wkst,
+transition_metal,HgS,mercury(II) sulfide,Binary Cpd Wkst,
+transition_metal,Ni3P2,nickel(II) phosphide,Binary Cpd Wkst,
+transition_metal,AuBr3,gold(III) bromide,Binary Cpd Wkst,
+transition_metal,Cu3N,copper(I) nitride,Binary Cpd Wkst,
+transition_metal,FeP,iron(III) phosphide,Binary Cpd Wkst,
+transition_metal,Cr3N2,chromium(II) nitride,Binary Cpd Wkst,
+transition_metal,FeCl2,iron(II) chloride,Binary Cpd Wkst,
+transition_metal,CuBr2,copper(II) bromide,Binary Cpd Wkst,
+transition_metal,CuI,copper(I) iodide,Binary Cpd Wkst,
+transition_metal,PbF2,lead(II) fluoride,Binary Cpd Wkst,
+transition_metal,Pb3N4,lead(IV) nitride,Binary Cpd Wkst,
+transition_metal,NiS,nickel(II) sulfide,Binary Cpd Wkst,
+transition_metal,AuI,gold(I) iodide,Binary Cpd Wkst,
+transition_metal,Hg2Cl2,mercury(I) chloride,Practice #2,do not simplify Hg2
+transition_metal,PbO2,lead(IV) oxide,Guided Inquiry,
+transition_metal,CuSe,copper(II) selenide,Guided Inquiry,
+transition_metal,SnF4,tin(IV) fluoride,Guided Inquiry,
+transition_metal,CoCl3,cobalt(III) chloride,Guided Inquiry,
+transition_metal,TiCl2,titanium(II) chloride,Guided Inquiry,
+transition_metal,MnF2,manganese(II) fluoride,Guided Inquiry,
+transition_metal,PbS2,lead(IV) sulfide,Guided Inquiry,
+transition_metal,TiO2,titanium(IV) oxide,Mixed II; Naming Formulas.pdf,
+transition_metal,CoCl2,cobalt(II) chloride,Mixed III,
+transition_metal,Mn3N4,manganese(IV) nitride,Mixed III,key says Mn3N2 - corrected
+transition_metal,MnS2,manganese(IV) sulfide,Mixed IV,
+transition_metal,CuO,copper(II) oxide,Naming Formulas.pdf; POGIL 16,
+transition_metal,CuF2,copper(II) fluoride,POGIL 16,
+transition_metal,V2S3,vanadium(III) sulfide,Mixed I,
+polyatomic,Na3PO4,sodium phosphate,Naming Guide; naming compounds.docx,
+polyatomic,NH4F,ammonium fluoride,Naming Guide; Guided Inquiry,guide typo "Floride"
+polyatomic,(NH4)2SO4,ammonium sulfate,Naming Guide; POGIL 17,
+polyatomic,NaNO3,sodium nitrate,Practice.docx,
+polyatomic,Ca3(PO4)2,calcium phosphate,Practice.docx; Guided Inquiry,
+polyatomic,NaNO2,sodium nitrite,Practice.docx; Mixed I,
+polyatomic,Li2SO4,lithium sulfate,Practice.docx,
+polyatomic,NH4ClO2,ammonium chlorite,Practice.docx,
+polyatomic,K3PO4,potassium phosphate,Practice.docx,
+polyatomic,CaCO3,calcium carbonate,Practice.docx; naming compounds.docx,
+polyatomic,NaOH,sodium hydroxide,Mixed II,
+polyatomic,K2SO3,potassium sulfite,Mixed II,
+polyatomic,Li2CO3,lithium carbonate,Mixed II,
+polyatomic,Ba3(PO4)2,barium phosphate,Mixed II,
+polyatomic,Fe(HCO3)3,iron(III) hydrogen carbonate,Mixed II,accept iron(III) bicarbonate
+polyatomic,CuSO3,copper(II) sulfite,Mixed II,
+polyatomic,Fe(OH)3,iron(III) hydroxide,Mixed I; POGIL 17,
+polyatomic,CuSO4,copper(II) sulfate,Mixed I,
+polyatomic,(NH4)3PO4,ammonium phosphate,Mixed I; POGIL 17,
+polyatomic,LiC2H3O2,lithium acetate,Mixed I,accept LiCH3COO
+polyatomic,Al(OH)3,aluminum hydroxide,Mixed I; Quiz B,
+polyatomic,Co2(CO3)3,cobalt(III) carbonate,Mixed I,
+polyatomic,MnCO3,manganese(II) carbonate,Mixed I,key says Mn(HCO3)2 - corrected
+polyatomic,AgNO3,silver nitrate,Mixed III,
+polyatomic,Al2(CO3)3,aluminum carbonate,Mixed III; POGIL 17,
+polyatomic,Ti(SO4)2,titanium(IV) sulfate,Mixed III,
+polyatomic,CuC2H3O2,copper(I) acetate,Mixed III,
+polyatomic,Fe2(SO3)3,iron(III) sulfite,Mixed III,
+polyatomic,Ca(OH)2,calcium hydroxide,Mixed IV,
+polyatomic,Fe(NO3)2,iron(II) nitrate,Mixed IV,
+polyatomic,KCN,potassium cyanide,Mixed IV; Guided Inquiry,
+polyatomic,Fe3(PO4)2,iron(II) phosphate,Mixed IV,
+polyatomic,Mg(NO2)2,magnesium nitrite,Mixed IV,
+polyatomic,(NH4)2S,ammonium sulfide,Guided Inquiry,
+polyatomic,CoSO4,cobalt(II) sulfate,Guided Inquiry,
+polyatomic,NH4NO3,ammonium nitrate,Guided Inquiry; POGIL 17,
+polyatomic,Fe(C2H3O2)3,iron(III) acetate,Guided Inquiry,
+polyatomic,SrSO4,strontium sulfate,Guided Inquiry,
+polyatomic,PbSO4,lead(II) sulfate,Guided Inquiry,
+polyatomic,MgCO3,magnesium carbonate,Guided Inquiry,
+polyatomic,Cu(OH)2,copper(II) hydroxide,Guided Inquiry,
+polyatomic,Zn3(PO4)2,zinc phosphate,Guided Inquiry,
+polyatomic,NaHCO3,sodium hydrogen carbonate,Guided Inquiry,accept sodium bicarbonate
+polyatomic,Sn(C2H3O2)2,tin(II) acetate,Guided Inquiry,
+polyatomic,Pb(NO3)2,lead(II) nitrate,Guided Inquiry,
+polyatomic,FeCO3,iron(II) carbonate,Guided Inquiry,
+polyatomic,MgSO4,magnesium sulfate,Guided Inquiry,
+polyatomic,Be(OH)2,beryllium hydroxide,naming compounds.docx,
+polyatomic,Mg(OH)2,magnesium hydroxide,naming compounds.docx,
+polyatomic,Mg(C2H3O2)2,magnesium acetate,naming compounds.docx; POGIL 17,
+polyatomic,NH4Cl,ammonium chloride,naming compounds.docx,
+polyatomic,NaCN,sodium cyanide,naming compounds.docx,
+polyatomic,Ba(NO2)2,barium nitrite,POGIL 17,
+polyatomic,KNO3,potassium nitrate,POGIL 17,
+polyatomic,CaSO4,calcium sulfate,POGIL 17,
+polyatomic,Cu(NO3)2,copper(II) nitrate,POGIL 17,
+polyatomic,Li3PO4,lithium phosphate,POGIL 17,
+polyatomic,KMnO4,potassium permanganate,POGIL 17,
+polyatomic,Al2(SO3)3,aluminum sulfite,POGIL 17,
+polyatomic,Mg(HCO3)2,magnesium hydrogen carbonate,POGIL 17,accept magnesium bicarbonate
+polyatomic,BaSO4,barium sulfate,POGIL 17,
+polyatomic,K2Cr2O7,potassium dichromate,POGIL 17,
+polyatomic,Fe(NO3)3,iron(III) nitrate,POGIL 17,
+polyatomic,K2HPO4,potassium hydrogen phosphate,Naming Formulas.pdf,
+polyatomic,Ca(HCO3)2,calcium hydrogen carbonate,Naming Formulas.pdf,
+polyatomic,NiSO3,nickel(II) sulfite,Naming Formulas.pdf,
+polyatomic,Pb(OH)2,lead(II) hydroxide,Naming Formulas.pdf,
+polyatomic,Ba(OH)2,barium hydroxide,Naming Formulas.pdf,
+polyatomic,NH4H2PO4,ammonium dihydrogen phosphate,Naming Formulas.pdf,
+polyatomic,Co(CN)2,cobalt(II) cyanide,Naming Formulas.pdf,
+polyatomic,Mn(ClO4)3,manganese(III) perchlorate,Naming Formulas.pdf,
+polyatomic,Zn(CN)2,zinc cyanide,Naming Formulas.pdf,source writes zinc(II) cyanide
+polyatomic,Al(C2H3O2)3,aluminum acetate,Naming Formulas.pdf,
+polyatomic,LiHSO3,lithium hydrogen sulfite,Naming Formulas.pdf,accept lithium bisulfite
+polyatomic,NaClO3,sodium chlorate,Naming Formulas.pdf,
+polyatomic,K2SO4,potassium sulfate,Naming Formulas.pdf,
+polyatomic,NaC2H3O2,sodium acetate,Naming Formulas.pdf,
+polyatomic,CaHPO4,calcium hydrogen phosphate,Naming Formulas.pdf,
+polyatomic,Cu3PO4,copper(I) phosphate,Quiz B,
+polyatomic,NH4MnO4,ammonium permanganate,Quiz B,
+polyatomic,MnPO4,manganese(III) phosphate,Quiz B,
+polyatomic,Cr(ClO2)2,chromium(II) chlorite,Quiz B,
+polyatomic,ZnSO4,zinc sulfate,Quiz B,
+polyatomic,MgCr2O7,magnesium dichromate,Quiz B,
+polyatomic,CuCr2O7,copper(II) dichromate,Quiz B,
+molecular,CO2,carbon dioxide,Naming Guide,
+molecular,P2O5,diphosphorus pentoxide,Naming Guide; Mixed II,
+molecular,SiO2,silicon dioxide,Formula Writing Guide,
+molecular,CO,carbon monoxide,Practice #2,
+molecular,N2O5,dinitrogen pentoxide,Practice #2,
+molecular,CCl4,carbon tetrachloride,Practice #2,
+molecular,SiF4,silicon tetrafluoride,Practice #2,
+molecular,SCl2,sulfur dichloride,Practice #2,
+molecular,N2O3,dinitrogen trioxide,Practice #2,
+molecular,PCl5,phosphorus pentachloride,Practice #2,
+molecular,NBr3,nitrogen tribromide,Practice #2,
+molecular,N2O,dinitrogen monoxide,Practice #2; Mixed II,
+molecular,N2O4,dinitrogen tetroxide,Binary Cpd Wkst,do not simplify
+molecular,Cl2O7,dichlorine heptoxide,Binary Cpd Wkst,
+molecular,OF2,oxygen difluoride,Binary Cpd Wkst,
+molecular,NF3,nitrogen trifluoride,Binary Cpd Wkst,
+molecular,SF6,sulfur hexafluoride,Binary Cpd Wkst,
+molecular,NO,nitrogen monoxide,Guided Inquiry,
+molecular,NO2,nitrogen dioxide,Guided Inquiry,
+molecular,PI3,phosphorus triiodide,Guided Inquiry,
+molecular,BF3,boron trifluoride,Guided Inquiry,
+molecular,P4O10,tetraphosphorus decoxide,Guided Inquiry,accept decaoxide
+molecular,SBr2,sulfur dibromide,Guided Inquiry,
+molecular,O2F2,dioxygen difluoride,Guided Inquiry,
+molecular,N2H4,dinitrogen tetrahydride,Guided Inquiry,
+molecular,XeF4,xenon tetrafluoride,Guided Inquiry,
+molecular,P4O3,tetraphosphorus trioxide,Guided Inquiry,
+molecular,BCl3,boron trichloride,Guided Inquiry; Mixed III,
+molecular,ClF3,chlorine trifluoride,Guided Inquiry,
+molecular,CS2,carbon disulfide,Guided Inquiry; Mixed I,
+molecular,ClF5,chlorine pentafluoride,POGIL 18,
+molecular,Cl2O,dichlorine monoxide,POGIL 18,
+molecular,IF7,iodine heptafluoride,POGIL 18,
+molecular,NI3,nitrogen triiodide,POGIL 18,
+molecular,B5H9,pentaboron nonahydride,POGIL 18,
+molecular,Br3O8,tribromine octoxide,POGIL 18,
+molecular,ClF,chlorine monofluoride,POGIL 18,
+molecular,PBr3,phosphorus tribromide,POGIL 18; Mixed II,
+molecular,SCl4,sulfur tetrachloride,POGIL 18,
+molecular,N2F2,dinitrogen difluoride,POGIL 18,
+molecular,SO3,sulfur trioxide,POGIL 18,
+molecular,BrF,bromine monofluoride,POGIL 18,
+molecular,S2F10,disulfur decafluoride,POGIL 18,
+molecular,P4S7,tetraphosphorus heptasulfide,POGIL 18,
+molecular,TeO3,tellurium trioxide,Mixed I,
+molecular,P4Se3,tetraphosphorus triselenide,Mixed I,
+molecular,P4S3,tetraphosphorus trisulfide,Mixed I,
+molecular,AsF5,arsenic pentafluoride,Mixed I,
+molecular,B2O2,diboron dioxide,Mixed II,do not simplify
+molecular,SiSe2,silicon diselenide,Mixed II,
+molecular,P2O3,diphosphorus trioxide,Mixed III,
+molecular,SO2,sulfur dioxide,Mixed III,
+molecular,Si2Se4,disilicon tetraselenide,Mixed III,do not simplify
+molecular,CF4,carbon tetrafluoride,Mixed IV,
+molecular,SiS2,silicon disulfide,Mixed IV,
+molecular,PF5,phosphorus pentafluoride,naming compounds.docx,
+molecular,B2H4,diboron tetrahydride,naming compounds.docx,
+molecular,P2Br4,diphosphorus tetrabromide,naming compounds.docx,
+common_name,H2O,water,Practice #2,
+common_name,NH3,ammonia,Mixed III; Mixed IV,
+common_name,CH4,methane,Mixed III; Mixed IV,
+element,F2,fluorine,Mixed II,diatomic element
+binary_acid,HBr,hydrobromic acid,Naming Guide,
+binary_acid,HCl,hydrochloric acid,Naming Guide,
+binary_acid,HI,hydroiodic acid,Formula Writing Guide; Practice #2,guide typo "Hydroidodic"
+binary_acid,HF,hydrofluoric acid,Practice #2; POGIL 19,
+binary_acid,H2S,hydrosulfuric acid,Practice #2; Mixed III,
+binary_acid,H2Se,hydroselenic acid,Practice #2,
+binary_acid,HCN,hydrocyanic acid,Mixed III; Practice #2,exception: 3 elements but uses hydro-
+oxyacid,H2SO4,sulfuric acid,Naming Guide,
+oxyacid,H2SO3,sulfurous acid,Naming Guide,
+oxyacid,H3PO4,phosphoric acid,Formula Writing Guide,
+oxyacid,H3PO3,phosphorous acid,POGIL 19,
+oxyacid,HNO3,nitric acid,Practice #2; Mixed IV,
+oxyacid,HNO2,nitrous acid,Practice #2; Mixed II,
+oxyacid,H2CO3,carbonic acid,Practice #2,
+oxyacid,HC2H3O2,acetic acid,Practice #2,
+oxyacid,HClO4,perchloric acid,Practice #2,per- acid
+oxyacid,HClO3,chloric acid,Practice #2,
+oxyacid,HClO2,chlorous acid,Practice #2,
+oxyacid,HClO,hypochlorous acid,Practice #2,hypo- acid
+oxyacid,H3AsO4,arsenic acid,Practice #2,
+oxyacid,H2CrO4,chromic acid,Practice #2,
+oxyacid,HMnO4,permanganic acid,Practice #2,
+oxyacid,H2C2O4,oxalic acid,Practice #2,
+oxyacid,H2Cr2O7,dichromic acid,Practice #2,`;
+function parseCSV(t) {
+  const [h, ...rows] = t.trim().split('\n'); const k = h.split(',');
+  return rows.map(r => { const v = r.split(','); return Object.fromEntries(k.map((x, i) => [x, (v.slice(i, i === k.length - 1 ? undefined : i + 1).join(',') || '').trim()])); });
+}
+const CATIONS = [], MONO_ANIONS = [], POLY_ANIONS = []; let NH4 = null, HPLUS = null;
+parseCSV(IONS_CSV).forEach(r => {
+  const q = +r.charge, m = /^(.*?)\(([IVX]+)\)$/.exec(r.name);
+  const formulaAlias = r.aliases && /^[A-Z]/.test(r.aliases) ? r.aliases : null;
+  const wordAlias = r.aliases && !formulaAlias ? r.aliases : null;
+  if (q > 0) {
+    const c = { sym: r.formula, name: m ? m[1] : r.name, q, kind: 'cation', fixed: r.variable_charge !== 'yes', roman: m ? ROMAN.indexOf(m[2]) : q,
+      poly: r.formula === 'NH4', dimer: r.formula === 'Hg2', older: wordAlias, metal: !['NH4', 'H'].includes(r.formula), note: r.notes };
+    if (r.formula === 'H') HPLUS = c; else if (r.formula === 'NH4') NH4 = c; else CATIONS.push(c);
+  } else {
+    const a = { sym: r.formula, name: r.name, q, kind: 'anion', poly: r.type === 'polyatomic_anion', alias: wordAlias, symAlias: formulaAlias };
+    (a.poly ? POLY_ANIONS : MONO_ANIONS).push(a);
+  }
+});
+const ALL_ANIONS = [...MONO_ANIONS, ...POLY_ANIONS];
+
+/* nonmetal names for molecular compounds */
+const NM = {
+  H: ['hydrogen', 'hydride'], B: ['boron', 'boride'], C: ['carbon', 'carbide'], N: ['nitrogen', 'nitride'], O: ['oxygen', 'oxide'],
+  F: ['fluorine', 'fluoride'], Si: ['silicon', 'silicide'], P: ['phosphorus', 'phosphide'], S: ['sulfur', 'sulfide'],
+  Cl: ['chlorine', 'chloride'], Se: ['selenium', 'selenide'], Br: ['bromine', 'bromide'], I: ['iodine', 'iodide'],
+  Xe: ['xenon', 'xenide'], Te: ['tellurium', 'telluride'], As: ['arsenic', 'arsenide']
+};
+const DIATOMIC = ['H2', 'N2', 'O2', 'F2', 'Cl2', 'Br2', 'I2'];  // decision 2: all seven diatomic elements
+
+
+/* ---------- formula helpers ---------- */
+const unit = (ion, n) => (n === 1 ? ion.sym : (ion.poly || ion.dimer) ? `(${ion.sym})${n}` : ion.sym + n);
+const unitNoParen = (ion, n) => (n === 1 ? ion.sym : ion.sym + n);
+function flatten(f) {
+  const stack = [{}]; let i = 0;
+  const add = (m, el, n) => { m[el] = (m[el] || 0) + n; };
+  while (i < f.length) {
+    const ch = f[i];
+    if (ch === '(') { stack.push({}); i++; continue; }
+    if (ch === ')') {
+      if (stack.length < 2) return null;
+      const g = stack.pop(); i++; let d = ''; while (/\d/.test(f[i] || '')) d += f[i++];
+      const n = d ? +d : 1; for (const k in g) add(stack[stack.length - 1], k, g[k] * n); continue;
+    }
+    const m = /^([A-Z][a-z]?)(\d*)/.exec(f.slice(i));
+    if (!m) return null;
+    add(stack[stack.length - 1], m[1], m[2] ? +m[2] : 1); i += m[0].length;
+  }
+  return stack.length === 1 ? stack[0] : null;
+}
+const sameMap = (a, b) => { const k = new Set([...Object.keys(a), ...Object.keys(b)]); for (const x of k) if ((a[x] || 0) !== (b[x] || 0)) return false; return true; };
+function proportional(a, b) {
+  const ka = Object.keys(a).sort(), kb = Object.keys(b).sort();
+  if (ka.join() !== kb.join()) return false;
+  const r = a[ka[0]] / b[ka[0]]; if (r === 1) return false;
+  return ka.every(k => Math.abs(a[k] / b[k] - r) < 1e-9);
+}
+const chargeTxt = q => (Math.abs(q) === 1 ? '' : Math.abs(q)) + (q > 0 ? '+' : '−');
+const signed = q => (q > 0 ? '+' : '−') + Math.abs(q);
+
+/* ---------- problem builders ---------- */
+let PID = 0;
+function ionic(c, a, category) {
+  const qc = c.q, qa = -a.q, l = qc * qa / gcd(qc, qa), nc = l / qc, na = l / qa;
+  const formula = unit(c, nc) + unit(a, na);
+  const catName = c.fixed ? c.name : `${c.name}(${ROMAN[c.roman]})`;
+  const name = `${catName} ${a.name}`;
+  const alts = [];
+  if (c.fixed && c.metal) alts.push({ name: `${c.name}(${ROMAN[c.roman]}) ${a.name}`, warn: `${cap(c.name)} has only one possible charge, so leave the Roman numeral off.` });
+  if (c.older) alts.push({ name: `${c.older} ${a.name}`, warn: null, older: true });
+  if (a.alias) alts.push({ name: `${catName} ${a.alias}`, warn: null });
+  const sub = c.sym === 'NH4' ? (a.poly ? 'c' : 'b') : 'a';
+  return {
+    id: ++PID, category, type: 'ionic', formula, name, alts, older: c.older ? `${c.older} ${a.name}` : null,
+    cation: c, anion: a, nc, na, raw: [qa, qc], sub,
+    guide: { f2n: category === 1 ? 'n-ionic' : category === 2 ? 'n-roman' : 'n-poly', n2f: 'f-cross' }
+  };
+}
+function molecular(f) {
+  const parts = [...f.matchAll(/([A-Z][a-z]?)(\d*)/g)].map(m => [m[1], m[2] ? +m[2] : 1]);
+  const [[e1, n1], [e2, n2]] = parts;
+  const p2 = PFX[n2], ide = NM[e2][1];
+  const second = /[ao]$/.test(p2) && ide[0] === 'o' ? p2.slice(0, -1) + ide : p2 + ide;
+  const name = `${n1 > 1 ? PFX[n1] : ''}${NM[e1][0]} ${second}`;
+  return { id: ++PID, category: 4, type: 'molecular', formula: f, name, alts: [], parts, guide: { f2n: 'n-molecular', n2f: 'f-molecular' } };
+}
+function common(f, name) {
+  return { id: ++PID, category: 4, type: 'common', formula: f, name, alts: [], guide: { f2n: 'n-common', n2f: 'f-common' } };
+}
+function diatomic(f) {
+  const el = f.replace(/\d/g, ''), name = NM[el][0];
+  return { id: ++PID, category: 4, type: 'element', formula: f, name, alts: [{ name: name + ' gas', warn: null }], guide: { f2n: 'n-common', n2f: 'f-common' } };
+}
+function acid(a, category, name) {
+  const qa = -a.q, formula = 'H' + (qa > 1 ? qa : '') + a.sym;
+  const p = { id: ++PID, category, type: 'acid', acidType: category === 5 ? 'binary' : 'oxy', formula, name, alts: [], anion: a, guide: { f2n: category === 5 ? 'n-acid-binary' : 'n-acid-oxy', n2f: category === 5 ? 'f-acid-binary' : 'f-acid-oxy' } };
+  if (a.sym === 'S') p.alts.push({ name: 'hydrogen sulfide', warn: null });
+  if (a.symAlias) p.altFormulas = ['C2H3O2H', 'CH3COOH'];
+  return p;
+}
+
+/* ---------- problem bank: every row is rebuilt from ions.csv and must reproduce the bank's own answer ---------- */
+const CATMAP = { binary_ionic: 1, transition_metal: 2, polyatomic: 3, molecular: 4, common_name: 4, element: 4, binary_acid: 5, oxyacid: 6 };
+const BANK_ISSUES = [];
+const findAnion = nm => ALL_ANIONS.find(a => a.name === nm || a.alias === nm);
+function bankIonic(r, cat) {
+  const [first, ...rest] = r.name.split(' '), anName = rest.join(' ');
+  const m = /^(.*?)\(([IVX]+)\)$/.exec(first);
+  let c = m ? CATIONS.find(x => x.name === m[1] && x.roman === ROMAN.indexOf(m[2])) : (first === 'ammonium' ? NH4 : CATIONS.find(x => x.name === first && x.fixed));
+  if (!c && m) {
+    const sym = /^\(?([A-Z][a-z]?)/.exec(r.formula)[1], q = ROMAN.indexOf(m[2]);
+    c = { sym, name: m[1], q, kind: 'cation', fixed: false, roman: q, poly: false, metal: true, adhoc: true };
+    BANK_ISSUES.push(`${r.formula}: ${first} is not in ions.csv (ion added for this row only)`);
+  }
+  const a = findAnion(anName);
+  if (!c || !a) { BANK_ISSUES.push(`${r.formula}: could not match "${r.name}" to ions.csv`); return null; }
+  return ionic(c, a, cat);
+}
+function bankAcid(r, cat) {
+  const m = /^H(\d*)(.+)$/.exec(r.formula), a = ALL_ANIONS.find(x => x.sym === m[2]);
+  if (!a) { BANK_ISSUES.push(`${r.formula}: anion ${m[2]} not in ions.csv`); return null; }
+  return acid(a, cat, r.name);
+}
+const BANK = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+parseCSV(BANK_CSV).forEach(r => {
+  const cat = CATMAP[r.category];
+  if (!cat) { BANK_ISSUES.push(`${r.formula}: unknown category ${r.category}`); return; }
+  const p = cat <= 3 ? bankIonic(r, cat) : r.category === 'molecular' ? molecular(r.formula) : r.category === 'common_name' ? common(r.formula, r.name) : r.category === 'element' ? diatomic(r.formula) : bankAcid(r, cat);
+  if (!p) return;
+  if (p.formula !== r.formula) BANK_ISSUES.push(`${r.name}: bank formula ${r.formula}, rules give ${p.formula}`);
+  if (p.name !== r.name) BANK_ISSUES.push(`${r.formula}: bank name "${r.name}", rules give "${p.name}"`);
+  p.formula = r.formula; p.name = r.name;   // the checked bank is the answer of record
+  p.source = r.source; p.bank = true; p.category = cat;
+  BANK[cat].push(p);
+});
+DIATOMIC.filter(f => !BANK[4].some(p => p.formula === f)).forEach(f => { const p = diatomic(f); p.source = 'Added: diatomic elements (decision 2)'; BANK[4].push(p); });
+
+/* ---------- generator: real ions from ions.csv, combined by the cross-over rule ---------- */
+const GEN = { 1: [], 2: [], 3: [] };
+const inBank = new Set(Object.values(BANK).flat().map(p => p.formula));
+const addGen = (c, a, cat) => { const p = ionic(c, a, cat); if (inBank.has(p.formula)) return; p.source = 'Generated from ions.csv'; GEN[cat].push(p); };
+const HYDRIDE_OK = c => c.fixed && c.q <= 2 && !['Zn', 'Cd', 'Ag'].includes(c.sym);
+CATIONS.filter(c => c.fixed).forEach(c => MONO_ANIONS.forEach(a => { if (a.sym === 'H' && !HYDRIDE_OK(c)) return; addGen(c, a, 1); }));
+CATIONS.filter(c => !c.fixed).forEach(c => MONO_ANIONS.forEach(a => { if (a.sym === 'H' || (c.dimer && -a.q > 2)) return; addGen(c, a, 2); }));
+CATIONS.forEach(c => POLY_ANIONS.forEach(a => { if (c.dimer && -a.q > 2) return; addGen(c, a, 3); }));
+MONO_ANIONS.filter(a => !['H', 'N', 'P', 'As', 'O'].includes(a.sym)).forEach(a => addGen(NH4, a, 3));
+POLY_ANIONS.forEach(a => addGen(NH4, a, 3));
+
+const POOLS = {}; for (let k = 1; k <= 6; k++) POOLS[k] = [...BANK[k], ...(GEN[k] || [])];
+const ALL = Object.values(POOLS).flat();
+const ACIDS = [...BANK[5], ...BANK[6]];
+
+/* ---------- name normalization ---------- */
+function normName(raw) {
+  const warn = [];
+  let s = String(raw || '').toLowerCase().replace(/[‐-―]/g, '-').replace(/\s+/g, ' ').trim();
+  s = s.replace(/\s*\(\s*/g, '(').replace(/\s*\)\s*/g, ') ').trim();
+  if (/sulph/.test(s)) { s = s.replace(/sulph/g, 'sulf'); warn.push('"Sulph-" is the British spelling. This class uses "sulf-".'); }
+  ALL_ANIONS.filter(a => a.alias).forEach(a => { s = s.replace(new RegExp('\\b' + a.alias + '\\b', 'g'), a.name); });
+  const v = s.replace(/\b(mon|tetr|pent|hex|hept|oct|non|dec)[ao]oxide\b/g, '$1oxide');
+  if (v !== s) { s = v; warn.push('Accepted. Drop the prefix vowel before "oxide": monoxide, pentoxide.'); }
+  return { s, warn };
+}
+/* ---------- formula normalization ---------- */
+function normFormula(raw) {
+  let s = String(raw || '').replace(/[₀-₉]/g, d => '₀₁₂₃₄₅₆₇₈₉'.indexOf(d)).replace(/\s+/g, '').replace(/\((aq|s|l|g)\)$/i, '');
+  s = s.replace(/[\[{]/g, '(').replace(/[\]}]/g, ')');
+  ALL_ANIONS.filter(a => a.symAlias).forEach(a => { s = s.split(a.symAlias).join(a.sym); });
+  return s;
+}
+function soften(s) { return s.replace(/([A-Za-z)])1(?!\d)/g, '$1').replace(/\(([A-Za-z0-9]+)\)(?!\d)/g, '$1'); }
+
+/* ---------- checking ---------- */
+function checkFormula(p, input) {
+  const s = normFormula(input);
+  const canon = normFormula(p.formula);
+  const alts = (p.altFormulas || []).map(normFormula);
+  const R = (ok, msg, warn) => ({ ok, msg, warn: warn || [], guide: p.guide.n2f, answer: p.formula });
+  if (!s) return R(false, 'Type a formula first.');
+  if (s === canon || alts.includes(s)) return R(true, 'Correct.');
+  const soft = soften(s);
+  if (soft !== s && (soft === canon || alts.includes(soft))) return R(true, 'Correct.', ['Leave off subscripts of 1, and use parentheses only when there is more than one polyatomic ion.']);
+  if (s.toLowerCase() === canon.toLowerCase()) return R(false, 'Check your capital letters. Each element symbol starts with one capital letter (Co is cobalt, CO is carbon + oxygen).');
+  const fs = flatten(s), fc = flatten(canon);
+  if (!fs) return R(false, 'That formula couldn\'t be read. Use element symbols, numbers, and parentheses only.');
+
+  if (p.type === 'ionic') {
+    const { cation: c, anion: a, nc, na, raw } = p;
+    const g = gcd(raw[0], raw[1]);
+    if (a.poly && na > 1 && s === unit(c, nc) + unitNoParen(a, na)) return R(false, `Put parentheses around ${a.sym} when there is more than one of it: (${a.sym})${na}. Without them, the ${na} only applies to the last element.`);
+    if (c.poly && nc > 1 && s.startsWith(c.sym + nc)) return R(false, `Put parentheses around NH4 when there is more than one: (NH4)${nc}.`);
+    if (g > 1 && s === unit(c, raw[0]) + unit(a, raw[1])) return R(false, `You crossed over correctly but didn't simplify. Ionic formulas use the lowest whole-number ratio: divide both subscripts by ${g}.`);
+    if (s === unit(a, na) + unit(c, nc)) return R(false, 'Write the cation (the metal or ammonium) first, then the anion.');
+    if (c.dimer && s === 'Hg' + unit(a, na / 2 >= 1 ? na / 2 : 1).replace(/^/, '')) return R(false, 'Mercury(I) is the Hg2²⁺ ion. Keep the Hg2 together and never simplify it: Hg2Cl2, not HgCl.');
+    if (c.dimer && /^Hg[A-Z(]/.test(s)) return R(false, 'Mercury(I) is the Hg2²⁺ ion, two mercury atoms bonded together. Keep Hg2 in the formula.');
+    if (!c.fixed) {
+      const others = CATIONS.filter(x => x.name === c.name && x !== c);
+      for (const o of others) {
+        const f2 = ionic(o, a, p.category).formula;
+        if (s === f2) return R(false, `That formula is ${o.name}(${ROMAN[o.roman]}) ${a.name}. The Roman numeral (${ROMAN[c.roman]}) tells you the metal's charge is ${signed(c.q / (c.dimer ? 2 : 1))}${c.dimer ? ' per atom (Hg2²⁺)' : ''}. Use that charge when you cross over.`);
+      }
+    }
+    for (const o of ALL_ANIONS) if (o !== a && s === ionic(c, o, p.category).formula) return R(false, `That formula uses ${o.name} (${o.sym}, ${signed(o.q)}). This compound needs ${a.name}: ${a.sym} with a ${signed(a.q)} charge. Check the ion sheet.`);
+    if (sameMap(fs, fc)) return R(false, 'You have the right atoms, but the formula is arranged wrong. Write the cation first and keep each polyatomic ion together as one unit.');
+    if (proportional(fs, fc)) return R(false, 'Close. Your ratio isn\'t in lowest terms. Reduce the subscripts to the smallest whole numbers.');
+    return R(false, `Find each ion's charge, cross over, check the total is zero, then simplify.`);
+  }
+  if (p.type === 'molecular') {
+    const [[e1, n1], [e2, n2]] = p.parts, g = gcd(n1, n2);
+    if (g > 1 && s === (e1 + (n1 / g > 1 ? n1 / g : '')) + (e2 + (n2 / g > 1 ? n2 / g : ''))) return R(false, 'Never simplify a molecular formula. The prefixes tell you the exact number of each atom.');
+    if (s === e1 + (n2 > 1 ? n2 : '') + e2 + (n1 > 1 ? n1 : '')) return R(false, 'The subscripts are switched. Each prefix belongs to the element right after it.');
+    if (proportional(fs, fc)) return R(false, 'Molecular formulas are never simplified or multiplied. Turn each prefix straight into a subscript.');
+    return R(false, 'Molecular compounds: write the symbols, then turn each prefix into a subscript (no prefix on the first element means 1).');
+  }
+  if (p.type === 'acid') {
+    const other = ACIDS.find(x => x !== p && normFormula(x.formula) === s);
+    if (other) return R(false, `That's the formula for ${other.name}. Remember: -ic acids come from -ate ions and -ous acids come from -ite ions; hydro- acids have no oxygen.`);
+    const fsNoH = { ...fs }, fcNoH = { ...fc }; delete fsNoH.H; delete fcNoH.H;
+    if (sameMap(fsNoH, fcNoH)) return R(false, `Check the hydrogens. Each H is +1, so you need as many H as the anion's charge (${p.anion.sym} is ${signed(p.anion.q)}).`);
+    return R(false, 'Identify the anion from the acid name, then cross over H⁺ with the anion\'s charge.');
+  }
+  if (p.type === 'element') return R(false, `${cap(p.name)} is diatomic: it exists as two atoms bonded together, ${p.formula}.`);
+  return R(false, `${cap(p.name)} is a common name to memorize: ${p.formula}.`);
+}
+
+const PFX_RE = /\b(mono|di|tri|tetra|penta|pent|hexa|hex|hepta|hept|octa|oct|nona|non|deca|dec)(?=[a-z])/;
+function stripPrefixes(s) { return s.split(' ').map(w => w.replace(/^(mono|mon|di|tri|tetra|tetr|penta|pent|hexa|hex|hepta|hept|octa|oct|nona|non|deca|dec)(?=(oxide|[a-z]{4,}))/, '')).join(' '); }
+
+function checkName(p, input) {
+  const { s, warn } = normName(input);
+  const exp = normName(p.name).s;
+  const R = (ok, msg, w) => ({ ok, msg, warn: [...warn, ...(w || [])], guide: p.guide.f2n, answer: p.name });
+  if (!s) return { ok: false, msg: 'Type a name first.', warn: [], guide: p.guide.f2n, answer: p.name };
+  if (s === exp) return R(true, 'Correct.');
+  for (const a of p.alts) if (normName(a.name).s === s) return R(true, a.older ? 'Correct. That\'s the older (traditional) name. The Stock name is ' + p.name + '.' : 'Correct.', a.warn ? [a.warn] : []);
+
+  if (p.type === 'ionic') {
+    const c = p.cation, a = p.anion;
+    const catPart = c.fixed ? c.name : `${c.name}(${ROMAN[c.roman].toLowerCase()})`;
+    if (/\(\d\)/.test(s) && !c.fixed) return R(false, `Use Roman numerals for the charge: ${c.name}(${ROMAN[c.roman]}), not ${c.name}(${c.roman}).`);
+    if (PFX_RE.test(s.replace(/^dihydrogen /, '').replace(/ dihydrogen /, ' ')) && !/dihydrogen phosphate|dichromate/.test(s) && !PFX_RE.test(exp.replace(/dihydrogen|dichromate/g, '')))
+      return R(false, 'Ionic compounds never use prefixes (di-, tri-…). The charges already fix the ratio. Just name the cation, then the anion.');
+    if (!c.fixed && s === `${c.name} ${a.name}`) return R(false, `${cap(c.name)} can have more than one charge, so it needs a Roman numeral. ${romanWork(p)}`);
+    const m = new RegExp(`^${c.name}\\(([ivx]+)\\) ${a.name}$`).exec(s);
+    if (m && !c.fixed) return R(false, `Wrong Roman numeral. ${romanWork(p)}`);
+    if (s.startsWith(catPart + ' ') || s.startsWith(c.name + ' ')) {
+      const given = s.split(' ').slice(-1)[0], want = a.name.split(' ').slice(-1)[0];
+      const stem = w => w.replace(/(ide|ate|ite)$/, '');
+      if (given !== want && /(ide|ate|ite)$/.test(given)) {
+        if (stem(given) === stem(want) || given.slice(0, 4) === want.slice(0, 4))
+          return R(false, `Check the anion ending. ${a.poly ? `${a.sym} is a polyatomic ion: look up its name on the ion sheet (${a.name}).` : `A single-element anion ends in -ide (${a.name}).`}`);
+      }
+      return R(false, `The cation is right. Now name the anion: ${a.sym} (${chargeTxt(a.q)}) is ${a.poly ? 'a polyatomic ion, so use the ion sheet' : 'a single element, so change the ending to -ide'}.`);
+    }
+    return R(false, 'Name the cation first (add a Roman numeral only if the metal can have more than one charge), then the anion.');
+  }
+  if (p.type === 'molecular') {
+    if (s === 'mono' + exp || s.replace(/^mono/, '') === exp) return R(false, 'Never use mono- on the first element. CO is carbon monoxide, not monocarbon monoxide.');
+    if (!s.includes(' ') ) return R(false, 'A molecular name has two words: the first element, then the second element with an -ide ending.');
+    if (stripPrefixes(s) === stripPrefixes(exp)) return R(false, `Check your prefixes. Count each atom: ${p.parts.map(([e, n]) => `${e} × ${n}`).join(', ')}. No prefix on the first element when there is only one.`);
+    return R(false, 'Two nonmetals means molecular: use prefixes for the number of atoms, and end the second element in -ide.');
+  }
+  if (p.type === 'acid') {
+    if (!/acid$/.test(s)) {
+      if (/^hydrogen /.test(s)) return R(false, 'The formula starts with H, so name it as an acid in this trainer (for example, HCl is hydrochloric acid).');
+      return R(false, 'Formulas that start with H are acids. The name ends with the word "acid".');
+    }
+    if (p.acidType === 'oxy' && /^hydro/.test(s) && s.replace(/^hydro/, '') === exp) return R(false, 'Don\'t add hydro- to an oxyacid. Hydro- is only for acids with no oxygen (and HCN).');
+    if (p.acidType === 'binary' && !/^hydro/.test(s)) return R(false, `This acid has no oxygen, so it gets hydro-: hydro + ${p.anion.name.replace(/ide$/, '')} + -ic acid. ${p.anion.sym === 'CN' ? 'HCN is the exception: cyanide takes hydro- even though it has three elements.' : ''}`);
+    const swap = exp.replace(/ic acid$/, 'ous acid') === s || exp.replace(/ous acid$/, 'ic acid') === s;
+    if (swap) return R(false, `Check the suffix. ${p.anion.name} ends in -${p.anion.name.slice(-3)}, so the acid ends in ${p.anion.name.endsWith('ate') ? '-ic' : '-ous'}. (-ate → -ic, -ite → -ous)`);
+    return R(false, `Find the anion (${p.anion.sym} is ${p.anion.name}) and apply the acid rule.`);
+  }
+  if (p.type === 'common') return R(false, `${p.formula} goes by its common name: ${p.name}.`);
+  return R(false, `${p.formula} is a single element (diatomic). It's named as the element: ${p.name}.`);
+}
+function romanWork(p) {
+  const c = p.cation, a = p.anion, tot = p.na * -a.q, per = tot / p.nc;
+  const atoms = c.dimer ? ' (two Hg atoms, so +1 each)' : '';
+  return `Work backward: ${p.na} ${a.name} × (${signed(a.q)}) = −${tot} total, so ${p.nc > 1 ? `${p.nc} ${c.name} ions share +${tot}: +${per} each` : `the ${c.name} must be +${per}`}${atoms} → (${ROMAN[c.roman]}).`;
+}
+
+/* ---------- step-by-step walkthroughs ---------- */
+function stepsFor(p, dir) {
+  const S = [];
+  const st = (label, value, note) => S.push({ label, value, note });
+  if (p.type === 'ionic') {
+    const c = p.cation, a = p.anion, [r0, r1] = p.raw, g = gcd(r0, r1);
+    const qc = c.dimer ? '+2 (Hg2²⁺)' : signed(c.q);
+    if (dir === 'n2f') {
+      st('Classify', c.metal ? 'metal + ' + (a.poly ? 'polyatomic ion' : 'nonmetal') + ' → ionic' : 'ammonium + ' + (a.poly ? 'polyatomic ion' : 'nonmetal') + ' → ionic', 'Use the Cross-Over Method.');
+      st('Symbols', `${c.sym}  |  ${a.sym}`);
+      st('Charges', `${qc}  |  ${signed(a.q)}`, c.fixed ? null : `The Roman numeral (${ROMAN[c.roman]}) gives the metal's charge.`);
+      st('Cross over', '§' + unit(c, r0) + unit(a, r1), 'Each charge becomes the other ion\'s subscript.');
+      st('Check', `${r0} × (${signed(c.q)}) + ${r1} × (${signed(a.q)}) = 0`);
+      st(g > 1 ? 'Simplify' : 'Simplify?', '§' + p.formula, g > 1 ? `Divide both subscripts by ${g}.` : 'Already the lowest ratio. Drop any subscript of 1.');
+    } else {
+      st('Classify', `${c.sym} ${c.dimer ? 'is the mercury(I) ion' : c.metal ? 'is a metal' : 'is ammonium'}${a.poly ? `, ${a.sym} is polyatomic` : ''} → ionic`, 'No prefixes in ionic names.');
+      st('Cation', `${c.sym} → ${c.name}`, c.fixed ? 'This metal has only one charge, so no Roman numeral.' : 'This metal can have more than one charge, so find its charge.');
+      if (!c.fixed) {
+        const tot = p.na * -a.q;
+        st('Anion total', `${p.na} × (${signed(a.q)}) = −${tot}`);
+        st('Metal charge', `+${tot} ÷ ${c.dimer ? '2 Hg atoms' : p.nc} = +${c.roman} → (${ROMAN[c.roman]})`);
+      }
+      st('Anion', `${a.sym} → ${a.name}`, a.poly ? 'Polyatomic: name from the ion sheet.' : 'Single element: change the ending to -ide.');
+      st('Name', p.name);
+    }
+  } else if (p.type === 'molecular') {
+    const pf = p.parts.map(([e, n], i) => (i === 0 && n === 1 ? `${e}: 1 (no prefix)` : `${e}: ${n} = ${PFX[n]}-`));
+    if (dir === 'n2f') {
+      st('Classify', 'two nonmetals → molecular', 'Prefixes tell you the number of atoms.');
+      st('Symbols', p.parts.map(x => x[0]).join('  |  '));
+      st('Prefixes → subscripts', pf.join(',  '));
+      st('Formula', '§' + p.formula, 'Never simplify a molecular formula.');
+    } else {
+      st('Classify', 'two nonmetals → molecular', 'Use prefixes.');
+      st('Count atoms', pf.join(',  '));
+      st('Rules', 'No mono- on the first element; drop the vowel before "oxide"');
+      st('Name', p.name);
+    }
+  } else if (p.type === 'acid') {
+    const a = p.anion, q = -a.q;
+    if (dir === 'n2f') {
+      st('Classify', 'ends in "acid" → acid', 'Cross over H⁺ with the anion.');
+      st('Find the anion', p.acidType === 'binary' ? `hydro-___-ic → ___-ide: ${a.name} (${a.sym}${chargeTxt(a.q)})` : `${p.name.endsWith('ous acid') ? '-ous → -ite' : '-ic → -ate'}: ${a.name} (${a.sym}${chargeTxt(a.q)})`);
+      st('Charges', `H +1  |  ${a.sym} ${signed(a.q)}`);
+      st('Cross over', '§' + p.formula, q > 1 ? `${q} H⁺ balance ${signed(a.q)}. Drop the subscript of 1 on the anion.` : 'One H⁺ balances −1.');
+    } else {
+      st('Classify', 'starts with H → acid');
+      st('Anion', `${a.sym} → ${a.name}`, p.acidType === 'binary' ? (a.sym === 'CN' ? 'Cyanide is the exception: it takes hydro-.' : 'No oxygen → binary acid.') : 'Contains oxygen → oxyacid.');
+      st('Rule', p.acidType === 'binary' ? 'hydro- + stem + -ic acid' : a.name.endsWith('ate') ? '-ate → -ic acid' : '-ite → -ous acid');
+      st('Name', p.name);
+    }
+  } else if (p.type === 'element') {
+    st('Classify', 'one element only', 'Seven elements exist as diatomic molecules: H2, N2, O2, F2, Cl2, Br2, I2.');
+    st(dir === 'n2f' ? 'Formula' : 'Name', dir === 'n2f' ? '§' + p.formula : p.name);
+  } else {
+    st('Classify', 'common-name compound', 'Water, ammonia, and methane are always called by their common names.');
+    st(dir === 'n2f' ? 'Formula' : 'Name', dir === 'n2f' ? '§' + p.formula : p.name);
+  }
+  return S;
+}
+
+/* ---------- picking problems ---------- */
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function poolFor(cat) { return cat === 7 ? ALL : POOLS[cat]; }
+function pick(cat, avoid = []) {
+  const k = cat === 7 ? 1 + Math.floor(Math.random() * 6) : cat;
+  let pool = GEN[k] && GEN[k].length && Math.random() < .5 ? GEN[k] : BANK[k];
+  if (k === 3) { const sub = ['a', 'b', 'c'][Math.floor(Math.random() * 3)], f = pool.filter(p => p.sub === sub); if (f.length) pool = f; }
+  const fresh = pool.filter(p => !avoid.includes(p.id));
+  const src = fresh.length ? fresh : pool;
+  return src[Math.floor(Math.random() * src.length)];
+}
+function setSizeFor(cat) { return cat === 7 ? CONFIG.setSize : Math.min(CONFIG.setSize, BANK[cat].length + (GEN[cat] ? GEN[cat].length : 0)); }
+function passFor(cat) { return Math.ceil(CONFIG.passScore / CONFIG.setSize * setSizeFor(cat) - 1e-9); }
+function makeSet(cat) {
+  const items = [], used = [];
+  for (let i = 0; i < setSizeFor(cat); i++) {
+    const p = pick(cat, used); used.push(p.id);
+    items.push({ p, dir: i % 2 === 0 ? 'n2f' : 'f2n' });
+  }
+  return shuffle(items);
+}
+
+if (typeof module !== 'undefined') module.exports = { setSizeFor, passFor, POOLS, BANK, GEN, BANK_ISSUES, ALL, checkFormula, checkName, stepsFor, makeSet, ionic, CATIONS, POLY_ANIONS, MONO_ANIONS, NH4, flatten };
+
+/* ===== UI ===== */
+const CATS = [
+  { n: 1, title: 'Binary ionic', sub: 'Metals with one charge', ex: 'MgS', exName: 'magnesium sulfide' },
+  { n: 2, title: 'Roman numerals', sub: 'Metals with more than one charge', ex: 'FeCl3', exName: 'iron(III) chloride' },
+  { n: 3, title: 'Polyatomic ions', sub: 'Ion-sheet ions, three kinds', ex: '(NH4)2SO4', exName: 'ammonium sulfate' },
+  { n: 4, title: 'Molecular', sub: 'Two nonmetals, prefixes', ex: 'P2O5', exName: 'diphosphorus pentoxide' },
+  { n: 5, title: 'Binary acids', sub: 'hydro- … -ic acid', ex: 'HBr', exName: 'hydrobromic acid' },
+  { n: 6, title: 'Oxyacids', sub: '-ate → -ic, -ite → -ous', ex: 'H2SO3', exName: 'sulfurous acid' },
+  { n: 7, title: 'Mixed review', sub: 'Classify first, then apply the rule', ex: 'Mix', exName: 'all types' }
+];
+
+/* ---------- guide content (teacher's structure, corrected wording N1–N7, F1–F4) ---------- */
+const RULES = {
+  'n-count': { g: 'n', t: 'Step 1. Count the elements', b: '<p>Count the capital letters. A polyatomic ion from the ion sheet counts as one unit.</p><p class="ex">NaNO<sub>3</sub> → Na + NO<sub>3</sub> = 2 units</p>' },
+  'n-common': { g: 'n', t: 'Common names and single elements', b: '<p>Some compounds always use their common name: H<sub>2</sub>O is <b>water</b>, NH<sub>3</sub> is <b>ammonia</b>, CH<sub>4</sub> is <b>methane</b>.</p><p>Seven elements exist as two-atom molecules: H<sub>2</sub>, N<sub>2</sub>, O<sub>2</sub>, F<sub>2</sub>, Cl<sub>2</sub>, Br<sub>2</sub>, I<sub>2</sub>. Name them as the element.</p><p class="ex">F<sub>2</sub> → fluorine</p>' },
+  'n-acid-binary': { g: 'n', t: 'Rule 1a. Binary acids', b: '<p>Hydrogen + a nonmetal (no oxygen). Name it <b>hydro-</b> + nonmetal stem + <b>-ic acid</b>.</p><p class="ex">HBr → hydrobromic acid<br>H<sub>2</sub>S → hydrosulfuric acid</p><p><b>Exception:</b> HCN has three elements, but cyanide takes hydro- too: hydrocyanic acid.</p>' },
+  'n-acid-oxy': { g: 'n', t: 'Rule 1b. Oxyacids', b: '<p>Hydrogen + a polyatomic ion that contains oxygen. Name the ion, then change the ending. No hydro-.</p><table class="mini"><tr><td>-ate</td><td>→ -ic acid</td></tr><tr><td>-ite</td><td>→ -ous acid</td></tr><tr><td>per-…-ate</td><td>→ per-…-ic acid</td></tr><tr><td>hypo-…-ite</td><td>→ hypo-…-ous acid</td></tr></table><p class="ex">H<sub>2</sub>SO<sub>3</sub> → sulfite → sulfurous acid<br>HClO<sub>4</sub> → perchlorate → perchloric acid<br>HClO → hypochlorite → hypochlorous acid</p>' },
+  'n-ionic': { g: 'n', t: 'Rule 2a. Binary ionic', b: '<p>Metal + nonmetal. The metal\'s name does not change. The nonmetal ending changes to <b>-ide</b>. Never use prefixes.</p><p class="ex">MgS → magnesium sulfide<br>GaCl<sub>3</sub> → gallium chloride</p><p>These metals have only one charge, so they never get a Roman numeral: Groups 1 and 2, Al, Ga, Zn, Cd, Ag, Sc.</p>' },
+  'n-roman': { g: 'n', t: 'Rule 2a, continued. Metals with more than one charge', b: '<p>If the metal can have more than one charge, find its charge from the anion and write it as a Roman numeral in parentheses.</p><p class="ex">FeCl<sub>3</sub>: 3 Cl × (−1) = −3, so Fe is +3 → iron(III) chloride<br>Fe<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>: 3 × (−2) = −6, shared by 2 Fe → +3 each → iron(III) sulfate</p><p>Mercury(I) is the Hg<sub>2</sub><sup>2+</sup> ion: Hg<sub>2</sub>Cl<sub>2</sub> is mercury(I) chloride.</p>' },
+  'n-molecular': { g: 'n', t: 'Rule 2b. Binary molecular', b: '<p>Nonmetal + nonmetal. Use prefixes for the number of atoms, and end the second element in <b>-ide</b>.</p><ul><li>Never use mono- on the first element.</li><li>Drop the prefix vowel before "oxide": monoxide, pentoxide.</li></ul><p class="ex">P<sub>2</sub>O<sub>5</sub> → diphosphorus pentoxide<br>CO → carbon monoxide</p><table class="mini pfx"><tr><td>1 mono</td><td>2 di</td><td>3 tri</td><td>4 tetra</td><td>5 penta</td></tr><tr><td>6 hexa</td><td>7 hepta</td><td>8 octa</td><td>9 nona</td><td>10 deca</td></tr></table>' },
+  'n-poly': { g: 'n', t: 'Rule 3. Polyatomic ions', b: '<p>Use the ion sheet. Name each ion as written; never use prefixes. If the metal can have more than one charge, add the Roman numeral (Rule 2a).</p><p class="ex"><b>3a</b> metal + polyatomic anion: Ca(OH)<sub>2</sub> → calcium hydroxide<br><b>3b</b> polyatomic cation + nonmetal: NH<sub>4</sub>F → ammonium fluoride<br><b>3c</b> polyatomic + polyatomic: (NH<sub>4</sub>)<sub>2</sub>SO<sub>4</sub> → ammonium sulfate</p>' },
+  'f-classify': { g: 'f', t: 'Step 1. Classify the name', b: '<p>Ends in "acid" → acid. Starts with a metal or ammonium → ionic. Two nonmetals → molecular. Water, ammonia, methane, or a single element → memorize.</p>' },
+  'f-cross': { g: 'f', t: 'Cross-Over Method (ionic)', b: '<ol><li>Write the symbols (cation first).</li><li>Write each charge. A Roman numeral is the metal\'s charge.</li><li>Cross over: each charge becomes the other ion\'s subscript.</li><li>Check that the total charge is zero.</li><li>Simplify to the lowest ratio. Drop subscripts of 1. Use parentheses only when there is more than one polyatomic ion.</li></ol><p class="ex">tin(II) oxide: Sn<sup>2+</sup> O<sup>2−</sup> → Sn<sub>2</sub>O<sub>2</sub> → SnO<br>calcium hydroxide: Ca<sup>2+</sup> OH<sup>−</sup> → Ca(OH)<sub>2</sub></p><p><b>Exception:</b> mercury(I) is Hg<sub>2</sub><sup>2+</sup>. Keep Hg<sub>2</sub> together: Hg<sub>2</sub>Cl<sub>2</sub>, never HgCl.</p>' },
+  'f-acid-binary': { g: 'f', t: 'Binary acids (hydro-)', b: '<p>hydro-___-ic acid comes from the ___-ide ion. Cross over H<sup>+</sup> with the ion\'s charge.</p><p class="ex">hydroiodic acid → I<sup>−</sup> → HI<br>hydrosulfuric acid → S<sup>2−</sup> → H<sub>2</sub>S<br>hydrocyanic acid → CN<sup>−</sup> → HCN</p>' },
+  'f-acid-oxy': { g: 'f', t: 'Oxyacids', b: '<p>-ic acid comes from the -ate ion; -ous acid comes from the -ite ion (per- and hypo- stay). Cross over H<sup>+</sup> with the ion\'s charge, then drop subscripts of 1.</p><p class="ex">phosphoric acid → PO<sub>4</sub><sup>3−</sup> → H<sub>3</sub>(PO<sub>4</sub>)<sub>1</sub> → H<sub>3</sub>PO<sub>4</sub><br>chlorous acid → ClO<sub>2</sub><sup>−</sup> → HClO<sub>2</sub></p>' },
+  'f-molecular': { g: 'f', t: 'Molecular (prefixes)', b: '<p>Write the symbols. Each prefix becomes the subscript of the element after it. No prefix on the first element means 1. <b>Never simplify.</b></p><p class="ex">dinitrogen tetroxide → N<sub>2</sub>O<sub>4</sub> (not NO<sub>2</sub>)<br>carbon tetrachloride → CCl<sub>4</sub></p>' },
+  'f-common': { g: 'f', t: 'Common names and elements', b: '<p>water → H<sub>2</sub>O, ammonia → NH<sub>3</sub>, methane → CH<sub>4</sub>.</p><p>A name that is just an element is that element. The seven diatomic elements are written with a 2: fluorine → F<sub>2</sub>, oxygen → O<sub>2</sub>.</p>' }
+};
+const TREES = {
+  n: {
+    title: 'Formula → Name', intro: 'Start by counting the elements: count the capital letters, and treat each polyatomic ion as one unit.',
+    start: 'a', nodes: {
+      a: { q: 'Is it water, ammonia, methane, or a single element like F2?', yes: '#n-common', no: 'b' },
+      b: { q: 'Does the formula start with H?', yes: 'c', no: 'd' },
+      c: { q: 'Is it H plus one nonmetal with no oxygen (or HCN)?', yes: '#n-acid-binary', no: '#n-acid-oxy' },
+      d: { q: 'Does it contain a polyatomic ion from the ion sheet?', yes: '#n-poly', no: 'e' },
+      e: { q: 'Is the first element a metal?', yes: 'f', no: '#n-molecular' },
+      f: { q: 'Can that metal have more than one charge? (Check the ion sheet.)', yes: '#n-roman', no: '#n-ionic' }
+    }
+  },
+  f: {
+    title: 'Name → Formula', intro: 'Classify the name first. The ending and the first word tell you which method to use.',
+    start: 'a', nodes: {
+      a: { q: 'Does the name end in "acid"?', yes: 'b', no: 'c' },
+      b: { q: 'Does it start with "hydro-"?', yes: '#f-acid-binary', no: '#f-acid-oxy' },
+      c: { q: 'Is it water, ammonia, methane, or just an element name?', yes: '#f-common', no: 'd' },
+      d: { q: 'Does it start with a metal or "ammonium"?', yes: '#f-cross', no: '#f-molecular' }
+    }
+  }
+};
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = f => esc(f).replace(/(\d+)/g, '<sub>$1</sub>');
+const ionHTML = ion => `${fmt(ion.sym)}<sup>${Math.abs(ion.q) === 1 ? '' : Math.abs(ion.q)}${ion.q > 0 ? '+' : '−'}</sup>`;
+const stepVal = v => (v.startsWith('§') ? `<span class="fx">${fmt(v.slice(1))}</span>` : esc(v));
+
+/* ---------- progress (this browser only) ---------- */
+const KEY = 'nomenclature-trainer-v1';
+let PROG = { mastered: {}, streak: {}, history: {} };
+try { const raw = localStorage.getItem(KEY); if (raw) PROG = Object.assign(PROG, JSON.parse(raw)); } catch (e) { }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(PROG)); } catch (e) { } };
+const unlocked = n => CONFIG.unlockAll || n === 1 || (n === 7 ? [1, 2, 3, 4, 5, 6].every(k => PROG.mastered[k]) : !!PROG.mastered[n - 1]);
+
+/* ---------- views ---------- */
+let VIEW = 'path';
+function go(view) {
+  VIEW = view;
+  document.querySelectorAll('[data-view]').forEach(el => { el.hidden = el.dataset.view !== view; });
+  document.querySelectorAll('.nav button').forEach(b => b.setAttribute('aria-current', b.dataset.go === view ? 'page' : 'false'));
+  window.scrollTo(0, 0);
+}
+
+function renderPath() {
+  const done = CATS.filter(c => PROG.mastered[c.n]).length;
+  $('#path-progress').textContent = `${done} of 7 badges earned`;
+  $('#path-bar').style.width = (done / 7 * 100) + '%';
+  $('#cats').innerHTML = CATS.map(c => {
+    const open = unlocked(c.n), m = PROG.mastered[c.n], st = PROG.streak[c.n] || 0, hist = PROG.history[c.n] || [];
+    const dots = Array.from({ length: CONFIG.setsInARow }, (_, i) => `<span class="dot ${m || i < st ? 'on' : ''}"></span>`).join('');
+    return `<li class="cat ${open ? '' : 'locked'} ${m ? 'mastered' : ''}">
+      <div class="tile t${c.n}" aria-hidden="true"><span class="z">${c.n}</span><span class="sym">${c.n === 7 ? 'Mix' : fmt(c.ex)}</span><span class="nm">${esc(c.exName)}</span></div>
+      <div class="cat-body">
+        <h3>${esc(c.title)} ${m ? '<span class="badge">Mastered</span>' : open ? '' : '<span class="lock">Locked</span>'}</h3>
+        <p class="muted">${esc(c.sub)}</p>
+        <p class="meta"><span class="dots" title="Passing sets in a row">${dots}</span> ${m ? 'Badge earned' : open ? `${st} of ${CONFIG.setsInARow} passing sets in a row` : `Master ${c.n === 7 ? 'categories 1–6' : 'category ' + (c.n - 1)} to unlock`}${hist.length ? ` · last set ${hist[hist.length - 1]}/${setSizeFor(c.n)}` : ''}</p>
+        <div class="row">
+          <button class="btn ghost" data-learn="${c.n}">Learn</button>
+          <button class="btn" data-practice="${c.n}" ${open ? '' : 'disabled'}>Practice</button>
+          <button class="btn solid" data-mastery="${c.n}" ${open ? '' : 'disabled'}>Mastery set</button>
+        </div>
+      </div></li>`;
+  }).join('');
+}
+
+/* ---------- guide ---------- */
+let GUIDE = 'n', TRAIL = [];
+const CAT_RULE = { 1: 'n-ionic', 2: 'n-roman', 3: 'n-poly', 4: 'n-molecular', 5: 'n-acid-binary', 6: 'n-acid-oxy', 7: 'n-count' };
+function renderGuide() {
+  document.querySelectorAll('[data-guide]').forEach(b => b.setAttribute('aria-pressed', b.dataset.guide === GUIDE));
+  const T = TREES[GUIDE];
+  if (!TRAIL.length) TRAIL = [T.start];
+  const cur = TRAIL[TRAIL.length - 1];
+  let html = `<p class="muted">${esc(T.intro)}</p><ol class="trail">`;
+  TRAIL.forEach((id, i) => {
+    if (id.startsWith('#')) return;
+    const node = T.nodes[id], next = TRAIL[i + 1];
+    if (next) html += `<li class="done"><span>${esc(node.q)}</span><b>${node.yes === next ? 'Yes' : 'No'}</b></li>`;
+    else html += `<li class="ask"><span>${esc(node.q)}</span><div class="row"><button class="btn solid" data-tree="yes">Yes</button><button class="btn" data-tree="no">No</button></div></li>`;
+  });
+  html += '</ol>';
+  if (cur.startsWith('#')) {
+    const r = RULES[cur.slice(1)];
+    html += `<div class="rule leaf"><h4>${esc(r.t)}</h4>${r.b}</div>`;
+  }
+  if (TRAIL.length > 1) html += `<button class="link" data-tree="reset">Start over</button>`;
+  $('#tree').innerHTML = html;
+  $('#rules').innerHTML = Object.entries(RULES).filter(([, r]) => r.g === GUIDE).map(([id, r]) => `<article class="rule" id="rule-${id}"><h4>${esc(r.t)}</h4>${r.b}</article>`).join('');
+}
+function openRule(id) {
+  GUIDE = id[0]; TRAIL = []; renderGuide(); go('guide');
+  const el = document.getElementById('rule-' + id);
+  if (el) { el.scrollIntoView({ block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+}
+
+/* ---------- ion sheet ---------- */
+function renderIons() {
+  const fixed = CATIONS.filter(c => c.fixed), variable = CATIONS.filter(c => !c.fixed);
+  const row = (ion, extra = '') => `<tr><td class="fx">${ionHTML(ion)}</td><td>${esc(ion.name)}${extra}</td></tr>`;
+  $('#ions-fixed').innerHTML = [...fixed, NH4].map(c => row(c)).join('');
+  $('#ions-var').innerHTML = variable.map((c, i) => `<tr><td class="fx">${ionHTML(c)}</td><td>${esc(c.name)}(${ROMAN[c.roman]})${c.older ? ` <button class="chip" data-older="${i}" aria-expanded="false">Show older name</button><span class="older" id="older-${i}" hidden>${esc(c.older)}</span>` : ''}</td></tr>`).join('');
+  $('#ions-mono').innerHTML = MONO_ANIONS.map(a => row(a)).join('');
+  $('#ions-poly').innerHTML = POLY_ANIONS.map(a => row(a, a.alias ? ` <span class="muted">(also "${esc(a.alias)}")</span>` : a.symAlias ? ` <span class="muted">(also written ${fmt(a.symAlias)})</span>` : '')).join('');
+}
+
+/* ---------- practice ---------- */
+let PR = { cat: 1, dirMode: 'mix', p: null, dir: 'n2f', steps: [], shown: 0, done: false, tries: 0, recent: [] };
+function newProblem() {
+  const p = pick(PR.cat, PR.recent);
+  PR.recent = [...PR.recent.slice(-8), p.id];
+  PR.p = p; PR.dir = PR.dirMode === 'mix' ? (Math.random() < .5 ? 'n2f' : 'f2n') : PR.dirMode;
+  PR.steps = stepsFor(p, PR.dir); PR.shown = 0; PR.done = false; PR.tries = 0;
+  renderPractice();
+  $('#pr-ans').value = ''; $('#pr-ans').focus({ preventScroll: true });
+}
+function renderPractice() {
+  const c = CATS[PR.cat - 1], p = PR.p;
+  $('#pr-title').textContent = `${c.n}. ${c.title}`;
+  document.querySelectorAll('[data-dir]').forEach(b => b.setAttribute('aria-pressed', b.dataset.dir === PR.dirMode));
+  const n2f = PR.dir === 'n2f';
+  $('#pr-ask').textContent = n2f ? 'Write the formula for' : 'Name this compound';
+  $('#pr-q').innerHTML = n2f ? `<span class="nmq">${esc(p.name)}</span>` : `<span class="fx">${fmt(p.formula)}</span>`;
+  const ans = $('#pr-ans');
+  ans.placeholder = n2f ? 'e.g. Ca(OH)2' : 'e.g. calcium hydroxide';
+  ans.className = 'answer ' + (n2f ? 'mono' : '');
+  ans.setAttribute('autocapitalize', 'off');
+  $('#pr-preview').hidden = !n2f; $('#pr-preview').innerHTML = '';
+  $('#pr-older').hidden = !p.older; $('#pr-older-txt').hidden = true;
+  $('#pr-older').setAttribute('aria-expanded', 'false');
+  $('#pr-older-txt').innerHTML = p.older ? `Older name: <b>${esc(p.older)}</b>. The -ic ending means the higher charge; -ous means the lower charge.` : '';
+  $('#pr-fb').innerHTML = ''; $('#pr-fb').className = 'fb';
+  $('#pr-showans').hidden = true;
+  $('#pr-next').hidden = true; $('#pr-check').hidden = false;
+  $('#pr-src').textContent = p.source ? (p.bank ? 'From: ' + p.source : p.source) : '';
+  $('#pr-hint').dataset.rule = n2f ? p.guide.n2f : p.guide.f2n;
+  renderSteps();
+}
+function renderSteps() {
+  $('#pr-steps').innerHTML = PR.steps.slice(0, PR.shown).map(s => `<li><span class="lbl">${esc(s.label)}</span><span class="val">${stepVal(s.value)}</span>${s.note ? `<span class="note">${esc(s.note)}</span>` : ''}</li>`).join('');
+  $('#pr-step').textContent = PR.shown === 0 ? 'Walk me through it' : PR.shown < PR.steps.length ? 'Next step' : 'All steps shown';
+  $('#pr-step').disabled = PR.shown >= PR.steps.length;
+}
+function checkPractice() {
+  if (PR.done) return newProblem();
+  const v = $('#pr-ans').value;
+  const r = PR.dir === 'n2f' ? checkFormula(PR.p, v) : checkName(PR.p, v);
+  const fb = $('#pr-fb');
+  if (!v.trim()) { fb.className = 'fb bad'; fb.innerHTML = `<p>${esc(r.msg)}</p>`; return; }
+  PR.tries++;
+  fb.className = 'fb ' + (r.ok ? (r.warn.length ? 'ok warn' : 'ok') : 'bad');
+  fb.innerHTML = `<p><b>${r.ok ? 'Correct.' : 'Not yet.'}</b> ${r.ok ? '' : esc(r.msg)}</p>` + (r.ok && r.msg !== 'Correct.' ? `<p>${esc(r.msg.replace(/^Correct\.\s*/, ''))}</p>` : '') + r.warn.map(w => `<p class="w">${esc(w)}</p>`).join('');
+  if (r.ok) { PR.done = true; $('#pr-check').hidden = true; $('#pr-next').hidden = false; $('#pr-next').focus(); PR.shown = PR.steps.length; renderSteps(); }
+  else if (PR.tries >= 2) $('#pr-showans').hidden = false;
+}
+
+/* ---------- mastery ---------- */
+let MS = null;
+function startMastery(n) {
+  MS = { cat: n, items: makeSet(n), i: 0, answers: [] };
+  go('mastery'); renderMasteryQ();
+}
+function renderMasteryQ() {
+  const c = CATS[MS.cat - 1], it = MS.items[MS.i], n2f = it.dir === 'n2f';
+  $('#ms-title').textContent = `${c.n}. ${c.title}`;
+  $('#ms-count').textContent = `Question ${MS.i + 1} of ${MS.items.length}`;
+  $('#ms-bar').style.width = (MS.i / MS.items.length * 100) + '%';
+  $('#ms-ask').textContent = n2f ? 'Write the formula for' : 'Name this compound';
+  $('#ms-q').innerHTML = n2f ? `<span class="nmq">${esc(it.p.name)}</span>` : `<span class="fx">${fmt(it.p.formula)}</span>`;
+  const a = $('#ms-ans'); a.value = ''; a.placeholder = n2f ? 'Formula' : 'Name'; a.className = 'answer ' + (n2f ? 'mono' : '');
+  $('#ms-preview').hidden = !n2f; $('#ms-preview').innerHTML = '';
+  $('#ms-quiz').hidden = false; $('#ms-results').hidden = true;
+  a.focus({ preventScroll: true });
+}
+function submitMastery() {
+  const it = MS.items[MS.i], v = $('#ms-ans').value;
+  if (!v.trim()) { $('#ms-ans').focus(); return; }
+  const r = it.dir === 'n2f' ? checkFormula(it.p, v) : checkName(it.p, v);
+  MS.answers.push({ it, v, r });
+  MS.i++;
+  if (MS.i < MS.items.length) renderMasteryQ(); else finishMastery();
+}
+function finishMastery() {
+  const score = MS.answers.filter(a => a.r.ok).length, n = MS.cat, need = passFor(n), pass = score >= need;
+  PROG.history[n] = [...(PROG.history[n] || []), score].slice(-10);
+  const wasMastered = !!PROG.mastered[n];
+  PROG.streak[n] = pass ? (PROG.streak[n] || 0) + 1 : 0;
+  if (PROG.streak[n] >= CONFIG.setsInARow) PROG.mastered[n] = true;
+  save();
+  const newBadge = !wasMastered && PROG.mastered[n];
+  $('#ms-bar').style.width = '100%';
+  $('#ms-quiz').hidden = true; $('#ms-results').hidden = false;
+  const missed = MS.answers.filter(a => !a.r.ok), warned = MS.answers.filter(a => a.r.ok && a.r.warn.length);
+  let verdict;
+  if (newBadge) verdict = `<b>Badge earned.</b> ${n < 7 ? `${CATS[n].title} is now unlocked.` : 'You have mastered every category.'}`;
+  else if (PROG.mastered[n]) verdict = pass ? 'Passed. You already hold this badge.' : `Below ${need}. Your badge stays, but review the misses below.`;
+  else if (pass) verdict = `Passed. Pass ${CONFIG.setsInARow - PROG.streak[n]} more set${CONFIG.setsInARow - PROG.streak[n] === 1 ? '' : 's'} in a row to earn the badge.`;
+  else verdict = `You need ${need} of ${MS.items.length} to pass. Your streak resets to 0. Review the misses, practice, then try again.`;
+  $('#ms-results').innerHTML = `
+    <div class="score ${pass ? 'pass' : 'fail'}"><span class="big">${score}<small>/${MS.items.length}</small></span><p>${verdict}</p></div>
+    ${missed.length ? `<h3>Missed</h3><ul class="missed">${missed.map(a => `<li>
+      <p class="q">${a.it.dir === 'n2f' ? `Formula for <b>${esc(a.it.p.name)}</b>` : `Name for <span class="fx">${fmt(a.it.p.formula)}</span>`}</p>
+      <p><span class="lbl">You wrote</span> ${a.it.dir === 'n2f' ? `<span class="fx">${fmt(a.v)}</span>` : esc(a.v)}</p>
+      <p><span class="lbl">Answer</span> ${a.it.dir === 'n2f' ? `<span class="fx">${fmt(a.it.p.formula)}</span>` : `<b>${esc(a.it.p.name)}</b>`}</p>
+      <p class="muted">${esc(a.r.msg)}</p>
+      <button class="link" data-rule="${a.r.guide}">Guide: ${esc(RULES[a.r.guide].t)}</button></li>`).join('')}</ul>` : '<p>No misses. Every answer was correct.</p>'}
+    ${warned.length ? `<h3>Correct, with a note</h3><ul class="missed">${warned.map(a => `<li><p>${a.it.dir === 'n2f' ? `<span class="fx">${fmt(a.v)}</span>` : esc(a.v)}</p><p class="muted">${a.r.warn.map(esc).join(' ')}</p></li>`).join('')}</ul>` : ''}
+    <div class="row"><button class="btn solid" data-mastery="${n}">New mastery set</button><button class="btn" data-practice="${n}">Practice</button><button class="btn ghost" data-go="path">Back to path</button></div>`;
+  renderPath();
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const d = t.dataset;
+  if (d.go) { if (d.go === 'path') renderPath(); if (d.go === 'guide') renderGuide(); go(d.go); }
+  if (d.learn) openRule(CAT_RULE[d.learn]);
+  if (d.practice) { PR.cat = +d.practice; PR.recent = []; go('practice'); newProblem(); }
+  if (d.mastery) startMastery(+d.mastery);
+  if (d.rule) openRule(d.rule);
+  if (d.guide) { GUIDE = d.guide; TRAIL = []; renderGuide(); }
+  if (d.tree) {
+    const T = TREES[GUIDE];
+    if (d.tree === 'reset') TRAIL = [];
+    else TRAIL.push(T.nodes[TRAIL[TRAIL.length - 1]][d.tree]);
+    renderGuide();
+  }
+  if (d.dir) { PR.dirMode = d.dir; newProblem(); }
+  if (d.older !== undefined) { const el = $('#older-' + d.older); el.hidden = !el.hidden; t.textContent = el.hidden ? 'Show older name' : 'Hide older name'; t.setAttribute('aria-expanded', !el.hidden); }
+  if (t.id === 'pr-check' || t.id === 'pr-next') checkPractice();
+  if (t.id === 'pr-skip') newProblem();
+  if (t.id === 'pr-step') { PR.shown++; renderSteps(); }
+  if (t.id === 'pr-hint') openRule(t.dataset.rule);
+  if (t.id === 'pr-older') { const x = $('#pr-older-txt'); x.hidden = !x.hidden; t.setAttribute('aria-expanded', !x.hidden); }
+  if (t.id === 'pr-showans') { const p = PR.p; $('#pr-fb').insertAdjacentHTML('beforeend', `<p class="ans">Answer: ${PR.dir === 'n2f' ? `<span class="fx">${fmt(p.formula)}</span>` : `<b>${esc(p.name)}</b>`}</p>`); t.hidden = true; PR.shown = PR.steps.length; renderSteps(); PR.done = true; $('#pr-check').hidden = true; $('#pr-next').hidden = false; }
+  if (t.id === 'ms-submit') submitMastery();
+  if (t.id === 'ms-quit') { go('path'); renderPath(); }
+  if (t.id === 'reset-ask') { $('#reset-confirm').hidden = false; t.hidden = true; }
+  if (t.id === 'reset-no') { $('#reset-confirm').hidden = true; $('#reset-ask').hidden = false; }
+  if (t.id === 'reset-yes') { PROG = { mastered: {}, streak: {}, history: {} }; try { localStorage.removeItem(KEY); } catch (e) { } $('#reset-confirm').hidden = true; $('#reset-ask').hidden = false; renderPath(); $('#reset-done').hidden = false; setTimeout(() => { $('#reset-done').hidden = true; }, 3000); }
+});
+['pr', 'ms'].forEach(k => {
+  const inp = $(`#${k}-ans`);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); k === 'pr' ? checkPractice() : submitMastery(); } });
+  inp.addEventListener('input', () => {
+    const pv = $(`#${k}-preview`); if (pv.hidden) return;
+    const v = normFormula(inp.value); pv.innerHTML = v ? `Reads as <span class="fx">${fmt(v)}</span>` : '';
+  });
+});
+
+$('#rule-txt').textContent = `Score ${CONFIG.passScore} or better out of ${CONFIG.setSize} on ${CONFIG.setsInARow} sets in a row to earn the badge and unlock the next category. Binary acids uses all ${setSizeFor(5)} acids once each and needs ${passFor(5)} correct.`;
+renderPath(); renderIons(); renderGuide(); go('path');
+
+</script>
+
+</body>
+</html>
